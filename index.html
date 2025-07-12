@@ -1,296 +1,69 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koi-Kukuri イベント申し込みフォームテスト1</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #fce4ec;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #d81b60;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        .intro-text {
-            text-align: center;
-            font-size: 15px;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        .event-details {
-            text-align: center;
-            background-color: #fffde7;
-            border: 1px dashed #fbc02d;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            font-size: 16px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        input[type="text"],
-        input[type="number"],
-        input[type="file"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        input[type="file"] {
-            padding: 5px;
-        }
-        .file-note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .privacy-policy {
-            margin-top: 25px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            height: 120px;
-            overflow-y: scroll;
-            background-color: #f9f9f9;
-            font-size: 12px;
-            color: #555;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-        }
-        .checkbox-group input {
-            margin-right: 10px;
-        }
-        .submit-btn {
-            width: 100%;
-            background-color: #d81b60;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .submit-btn:hover {
-            background-color: #c2185b;
-        }
-        .submit-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        #submission-complete {
-            text-align: center;
-            padding: 40px 20px;
-        }
-         #submission-complete h2 {
-            color: #d81b60;
-         }
-        .button-group {
-            margin-top: 20px;
-        }
-        .button-group a {
-            display: inline-block;
-            padding: 12px 24px;
-            margin: 5px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .profile-btn {
-            background-color: #d81b60;
-            color: white;
-        }
-        .later-btn {
-            background-color: #eee;
-            color: #333;
-        }
-        .loading-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .loading-container p {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            margin-top: 20px;
-        }
-        .loading-spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #d81b60;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1.5s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>イベント日程選択</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff8f8;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #d81b60;
+    }
+    .event-box {
+      border: 1px solid #fbc02d;
+      border-radius: 10px;
+      padding: 20px;
+      background: #fffde7;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #d81b60;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #c2185b;
+    }
+  </style>
 </head>
 <body>
+  <h1>イベント参加希望日を選択</h1>
+  <div class="event-box">
+    <p><strong>2025年8月3日(日) 14:00〜16:00</strong></p>
+    <button onclick="submitAndRedirect()">この日程で申し込む</button>
+  </div>
 
-    <div id="loading-overlay" class="loading-container">
-        <div class="loading-spinner"></div>
-        <p>送信中...</p>
-    </div>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    async function submitAndRedirect() {
+      await liff.init({ liffId: 'あなたのLIFF IDをここに' });
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      } else {
+        const profile = await liff.getProfile();
+        const gender = (await liff.getDecodedIDToken()).gender || '';
 
-    <div class="container" id="form-container">
-        <h1>Koi-Kukuri イベント申し込み</h1>
-        
-        <p class="intro-text">
-            イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。
-        </p>
-        <div class="event-details">
-            <strong>開催日時:</strong> 2025年8月3日(日) 14:00〜16:00
-        </div>
-        
-        <form id="applicationForm">
-            <input type="hidden" id="lineUserId" name="lineUserId">
-            <div class="form-group">
-                <label for="name">氏名</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="age">年齢</label>
-                <input type="number" id="age" name="age" min="18" required>
-            </div>
-            <div class="form-group">
-                <label for="gender">性別</label>
-                <select id="gender" name="gender" required>
-                    <option value="">選択してください</option>
-                    <option value="男性">男性</option>
-                    <option value="女性">女性</option>
-                    <option value="その他">その他</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="prefecture">都道府県</label>
-                <select id="prefecture" name="prefecture" required>
-                    <option value="">選択してください</option>
-                    <option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="id-upload">身分証アップロード</label>
-                <input type="file" id="id-upload" name="id-upload" accept="image/*">
-                <p class="file-note">※テストプレイのため、提出は任意です。</p>
-            </div>
-            <div class="privacy-policy">
-                <p><strong>プライバシーポリシー</strong></p>
-                <p>（ここにプライバシーポリシーのテキストを記載します。以下はサンプルです。）</p>
-                <p>Koi-Kukuri運営事務局（以下「当事務局」といいます。）は、本サービスの利用者（以下「ユーザー」といいます。）の個人情報を、以下のとおり取り扱います。</p>
-                <p>第1条（個人情報の取得）<br>当事務局は、ユーザーが本サービスを利用するにあたり、氏名、年齢、性別、連絡先、その他申込フォームにご入力いただいた情報を取得します。</p>
-                <p>第2条（利用目的）<br>取得した個人情報は、イベント運営、本人確認、お問い合わせ対応、及びサービスの改善のために利用します。</p>
-                <p>第3条（第三者提供）<br>当事務局は、法令に基づく場合を除き、ユーザーの同意なく個人情報を第三者に提供しません。</p>
-                <p>（本番運用開始までに、貴社の運用に合わせて内容を修正・追記してください。）</p>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="privacy-consent" name="privacy-consent" required>
-                <label for="privacy-consent">プライバシーポリシーに同意します</label>
-            </div>
-            <br>
-            <button type="submit" class="submit-btn">申し込みを確定する</button>
-        </form>
-    </div>
+        const lineId = encodeURIComponent(profile.userId);
+        const displayName = encodeURIComponent(profile.displayName);
+        const userGender = encodeURIComponent(gender);
 
-    <div class="container" id="submission-complete" style="display: none;">
-        <h2>お申し込み<br>ありがとうございます！</h2>
-        <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
-        <div class="button-group">
-            <a href="YOUR_PROFILE_REGISTRATION_URL" class="profile-btn">プロフィール登録に進む</a>
-            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
-        </div>
-    </div>
+        const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScY056c8mHEKRcUJ47N-e0JOjGT3f7xXquAjs7gNioe1DJwCg/viewform';
+        const withParams = `${formUrl}?usp=pp_url&entry.1111111111=${lineId}&entry.2222222222=${displayName}&entry.3333333333=${userGender}`;
 
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
-        async function main() {
-            await liff.init({ liffId: "2007667389-LbQyBzQX" });
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            } else {
-                const profile = await liff.getProfile();
-                document.getElementById('lineUserId').value = profile.userId;
-                document.getElementById('name').value = profile.displayName;
-            }
-        }
-        main();
-
-        const form = document.getElementById('applicationForm');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const formContainer = document.getElementById('form-container');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const submissionComplete = document.getElementById('submission-complete');
-
-            formContainer.style.display = 'none';
-            loadingOverlay.style.display = 'flex';
-
-            const formData = new FormData(form);
-            const endpoint = 'https://script.google.com/macros/s/AKfycbxGXjtUyCOubLjClhmyj77gmV-tVVHQl8MwbloAWI6nNltYpBz1vPet2fKJ-yXdGqcUyQ/exec';
-
-            fetch(endpoint, {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                loadingOverlay.style.display = 'none';
-                if (data.status === 'success') {
-                    submissionComplete.style.display = 'block';
-                } else {
-                    alert('エラーが発生しました: ' + data.message);
-                    formContainer.style.display = 'block';
-                }
-            })
-            .catch((error) => {
-                loadingOverlay.style.display = 'none';
-                console.error('Error:', error);
-                alert('送信中にネットワークエラーが発生しました。');
-                formContainer.style.display = 'block';
-            });
-        });
-    </script>
+        location.href = withParams;
+      }
+    }
+  </script>
 </body>
 </html>
