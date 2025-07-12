@@ -1,88 +1,61 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>イベント日程選択</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #fff8f8;
-      padding: 20px;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #d81b60;
-    }
-    .event-box {
-      border: 1px solid #fbc02d;
-      border-radius: 10px;
-      padding: 20px;
-      background: #fffde7;
-      margin: 20px 0;
-    }
-    button {
-      background-color: #d81b60;
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      width: 100%;
-    }
-    button:hover {
-      background-color: #c2185b;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>イベント申し込みフォーム</title>
 </head>
 <body>
-  <h1>イベント参加希望日を選択</h1>
-  <div class="event-box">
-    <p><strong>2025年8月3日(日) 14:00〜16:00</strong></p>
-    <button onclick="submitAndRedirect()">この日程で申し込む</button>
-  </div>
+  <h1>プロフィール登録</h1>
+  <form id="uploadForm">
+    <label>名前: <input type="text" name="name" required></label><br>
+    <label>生年月日: <input type="date" name="birthday" required></label><br>
+    <label>都道府県: <input type="text" name="prefecture" required></label><br>
+    <label>身分証画像: <input type="file" name="file" accept="image/*" required></label><br>
+    <label><input type="checkbox" name="agree" required> プライバシーポリシーに同意する</label><br>
+    <button type="submit">送信</button>
+  </form>
+
+  <p id="message"></p>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    async function submitAndRedirect() {
-      try {
-        console.log('LIFF初期化中...');
-        await liff.init({ liffId: '2007667389-LbQyBzQX' });
+    let lineId = "";
+    let displayName = "";
+    let gender = "";
 
-        if (!liff.isLoggedIn()) {
-          console.log('LIFFログイン未完了。ログインへリダイレクトします。');
-          liff.login({ redirectUri: location.href });
-          return;
-        }
-
-        console.log('ログイン済み。プロフィール取得中...');
+    async function initLIFF() {
+      await liff.init({ liffId: "2007667389-LbQyBzQX" });
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      } else {
         const profile = await liff.getProfile();
         const idToken = await liff.getDecodedIDToken();
-        const gender = idToken?.gender || '';
-
-        const lineId = encodeURIComponent(profile.userId);
-        const displayName = encodeURIComponent(profile.displayName);
-        const userGender = encodeURIComponent(gender);
-
-        console.log(`LINE ID: ${lineId}`);
-        console.log(`名前: ${displayName}`);
-        console.log(`性別: ${userGender}`);
-
-        const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScY056c8mHEKRcUJ47N-e0JOjGT3f7xXquAjs7gNioe1DJwCg/viewform';
-        const withParams = `${formUrl}?usp=pp_url` +
-          `&entry.1368952148=${lineId}` +        // LINE ID
-          `&entry.1089734014=${displayName}` +   // 名前
-          `&entry.1166641252=${userGender}`;     // 性別
-
-        console.log('Googleフォームへ遷移:', withParams);
-        location.href = withParams;
-      } catch (error) {
-        alert('エラーが発生しました：' + error.message);
-        console.error(error);
+        lineId = profile.userId;
+        displayName = profile.displayName;
+        gender = idToken.gender || '';
       }
     }
+
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      formData.append("lineId", lineId);
+      formData.append("displayName", displayName);
+      formData.append("gender", gender);
+
+      const response = await fetch("https://script.google.com/macros/s/AKfycbynAlo60GdurdZaY2tMxmPexb_y5OQ7mOpYMnzqAGpgk5A_TbdWzrafeAfDjvJD7C8s3A/exec", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.text();
+      document.getElementById("message").textContent = result;
+    });
+
+    initLIFF();
   </script>
 </body>
 </html>
