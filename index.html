@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>イベント日程選択</title>
   <style>
     body {
@@ -59,7 +59,10 @@
         const userGender = encodeURIComponent(gender);
 
         const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScY056c8mHEKRcUJ47N-e0JOjGT3f7xXquAjs7gNioe1DJwCg/viewform';
-        const withParams = `${formUrl}?usp=pp_url&entry.1111111111=${lineId}&entry.2222222222=${displayName}&entry.3333333333=${userGender}`;
+        const withParams = `${formUrl}?usp=pp_url` +
+          `&entry.1368952148=${lineId}` +        // LINE ID
+          `&entry.1089734014=${displayName}` +   // 名前
+          `&entry.1166641252=${userGender}`;     // 性別
 
         location.href = withParams;
       }
