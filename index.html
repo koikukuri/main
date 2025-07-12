@@ -34,7 +34,7 @@
 <body>
     <div id="loading-overlay" class="loading-container">
         <div class="loading-spinner"></div>
-        <p>診断中...</p>
+        <p>送信中...</p>
     </div>
     <div class="container" id="form-container">
         <h1>Koi-Kukuri イベント申し込み</h1>
@@ -68,37 +68,84 @@
             }
         }
         main();
+
         const form = document.getElementById('applicationForm');
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-            const formContainer = document.getElementById('form-container');
+            
             const loadingOverlay = document.getElementById('loading-overlay');
-            const submissionComplete = document.getElementById('submission-complete');
-            formContainer.style.display = 'none';
             loadingOverlay.style.display = 'flex';
-            const formData = new FormData(form);
+            document.getElementById('form-container').style.display = 'none';
+
+            const fileInput = document.getElementById('id-upload');
+            const file = fileInput.files[0];
+
+            // 全てのフォームデータを集める
+            const data = {
+                lineUserId: document.getElementById('lineUserId').value,
+                name: document.getElementById('name').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                prefecture: document.getElementById('prefecture').value,
+            };
+
+            // ファイルが選択されている場合
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function() {
+                    // ファイルをBase64文字列に変換してデータに追加
+                    data.fileData = reader.result;
+                    data.fileName = file.name;
+                    sendData(data); // データ送信を実行
+                };
+                reader.onerror = function() {
+                    alert('ファイルの読み込みに失敗しました。');
+                    loadingOverlay.style.display = 'none';
+                    document.getElementById('form-container').style.display = 'block';
+                };
+            } else {
+                // ファイルが選択されていない場合
+                sendData(data); // そのままデータ送信を実行
+            }
+        });
+
+        function sendData(data) {
+            // ▼▼▼ 新しいURLに更新しました ▼▼▼
             const endpoint = 'https://script.google.com/macros/s/AKfycbzxg9uF_dSI5RJpM3OMTnNqPcw8A3irsUPMSOa-nf8Ovn5lVvdwCd1COPod1KdrRfpv_A/exec';
-            fetch(endpoint, { method: 'POST', body: formData, })
-            .then(response => response.json())
-            .then(data => {
+            
+            fetch(endpoint, {
+                method: 'POST',
+                //【重要】この送信方法では、mode: 'no-cors' は不要です
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8', // テキストとして送信
+                },
+                body: JSON.stringify(data) // データをJSON文字列に変換
+            })
+            .then(response => response.json()) // サーバーからの応答をJSONとして解釈
+            .then(resData => {
+                // サーバーからの応答に基づいて処理を分岐
+                const loadingOverlay = document.getElementById('loading-overlay');
+                const formContainer = document.getElementById('form-container');
+                const submissionComplete = document.getElementById('submission-complete');
+
                 loadingOverlay.style.display = 'none';
-                if (data.status === 'debug') {
-                    alert("サーバーからの診断レポート:\n\n" + data.message);
-                    formContainer.style.display = 'block';
-                } else if (data.status === 'success') {
+
+                if (resData.status === 'success') {
                     submissionComplete.style.display = 'block';
                 } else {
-                    alert('エラーが発生しました: ' + data.message);
+                    // サーバー側でエラーが起きた場合
+                    alert('エラーが発生しました: ' + (resData.message || '不明なエラー'));
                     formContainer.style.display = 'block';
                 }
             })
-            .catch((error) => {
-                loadingOverlay.style.display = 'none';
-                console.error('Error:', error);
-                alert('送信中にネットワークエラーが発生しました。');
-                formContainer.style.display = 'block';
+            .catch(error => {
+                // ネットワークエラーなど、通信自体に失敗した場合
+                document.getElementById('loading-overlay').style.display = 'none';
+                document.getElementById('form-container').style.display = 'block';
+                alert('送信中にエラーが発生しました: ' + error);
             });
-        });
+        }
     </script>
 </body>
 </html>
