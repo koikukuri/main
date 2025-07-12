@@ -219,7 +219,6 @@
     <script>
         async function main() {
             // LIFFの初期化
-            // TODO: あなたのLIFF IDをここに設定してください
             await liff.init({ liffId: "2007667389-LbQyBzQX" });
 
             if (!liff.isLoggedIn()) {
@@ -247,15 +246,31 @@
 
             const formData = new FormData(form);
 
-            // TODO: ここでサーバーにデータを送信する処理を実装します
+            // あなたが設定したエンドポイントURL
             const endpoint = 'https://script.google.com/macros/s/AKfycbwOdJT6DvG-eaFBg_6CNm2bCIg_6PQpKW7BoPua1qHXA1sIOKfst9bvAXfkaWkRNaH0cA/exec';
             
-            // --- デモ用の挙動 ---
-            console.log('フォームデータ:', Object.fromEntries(formData));
-            alert('テスト送信が完了しました。\n実際にはこのデータをサーバーに送信します。');
-            document.getElementById('form-container').style.display = 'none';
-            document.getElementById('submission-complete').style.display = 'block';
-            // --- デモ用の挙動ここまで ---
+            // fetchを使ってデータを送信する
+            fetch(endpoint, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if(data.status === 'success'){
+                    // 成功したらフォームを非表示にし、完了メッセージを表示
+                    document.getElementById('form-container').style.display = 'none';
+                    document.getElementById('submission-complete').style.display = 'block';
+                } else {
+                    // Apps Script側でエラーが起きた場合 (例: シート名が違うなど)
+                    alert('エラーが発生しました: ' + data.message);
+                }
+            })
+            .catch((error) => {
+                // 通信自体に失敗した場合
+                console.error('Error:', error);
+                alert('送信中にネットワークエラーが発生しました。');
+            });
         });
     </script>
 </body>
