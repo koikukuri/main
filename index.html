@@ -40,38 +40,48 @@
 <body>
   <h1>イベント参加希望日を選択</h1>
   <div class="event-box">
-    <p><strong>【テスト開催】2025年8月3日(日) 14:00〜16:00</strong></p>
+    <p><strong>2025年8月3日(日) 14:00〜16:00</strong></p>
     <button onclick="submitAndRedirect()">この日程で申し込む</button>
   </div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     async function submitAndRedirect() {
-      await liff.init({ liffId: '2007667389-LbQyBzQX' });
+      try {
+        console.log('LIFF初期化中...');
+        await liff.init({ liffId: '2007667389-LbQyBzQX' });
 
-      if (!liff.isLoggedIn()) {
-        // ログインしてなければLINEログイン→現在のURLに戻る
-        liff.login({ redirectUri: location.href });
-        return;
+        if (!liff.isLoggedIn()) {
+          console.log('LIFFログイン未完了。ログインへリダイレクトします。');
+          liff.login({ redirectUri: location.href });
+          return;
+        }
+
+        console.log('ログイン済み。プロフィール取得中...');
+        const profile = await liff.getProfile();
+        const idToken = await liff.getDecodedIDToken();
+        const gender = idToken?.gender || '';
+
+        const lineId = encodeURIComponent(profile.userId);
+        const displayName = encodeURIComponent(profile.displayName);
+        const userGender = encodeURIComponent(gender);
+
+        console.log(`LINE ID: ${lineId}`);
+        console.log(`名前: ${displayName}`);
+        console.log(`性別: ${userGender}`);
+
+        const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScY056c8mHEKRcUJ47N-e0JOjGT3f7xXquAjs7gNioe1DJwCg/viewform';
+        const withParams = `${formUrl}?usp=pp_url` +
+          `&entry.1368952148=${lineId}` +        // LINE ID
+          `&entry.1089734014=${displayName}` +   // 名前
+          `&entry.1166641252=${userGender}`;     // 性別
+
+        console.log('Googleフォームへ遷移:', withParams);
+        location.href = withParams;
+      } catch (error) {
+        alert('エラーが発生しました：' + error.message);
+        console.error(error);
       }
-
-      // ログイン済みならプロフィール取得
-      const profile = await liff.getProfile();
-      const gender = (await liff.getDecodedIDToken()).gender || '';
-
-      const lineId = encodeURIComponent(profile.userId);
-      const displayName = encodeURIComponent(profile.displayName);
-      const userGender = encodeURIComponent(gender);
-
-      // GoogleフォームのURLとエントリID（entry.XXXXXXX）は事前に取得しておく
-      const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScY056c8mHEKRcUJ47N-e0JOjGT3f7xXquAjs7gNioe1DJwCg/viewform';
-      const withParams = `${formUrl}?usp=pp_url` +
-        `&entry.1368952148=${lineId}` +        // LINE ID
-        `&entry.1089734014=${displayName}` +   // 名前
-        `&entry.1166641252=${userGender}`;     // 性別
-
-      // フォームに遷移
-      location.href = withParams;
     }
   </script>
 </body>
