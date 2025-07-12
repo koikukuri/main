@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koi-Kukuri イベント申し込みフォーム</title>
+    <title>Koi-Kukuri イベント申し込みフォームテスト1</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #fce4ec; /* 背景を薄いピンクに */
+            background-color: #fce4ec;
             color: #333;
             margin: 0;
             padding: 20px;
@@ -22,7 +22,7 @@
         }
         h1 {
             text-align: center;
-            color: #d81b60; /* メインカラー */
+            color: #d81b60;
             font-size: 24px;
             margin-bottom: 10px;
         }
@@ -91,7 +91,7 @@
         }
         .submit-btn {
             width: 100%;
-            background-color: #d81b60; /* ボタンの背景色 */
+            background-color: #d81b60;
             color: white;
             padding: 15px;
             border: none;
@@ -134,9 +134,45 @@
             background-color: #eee;
             color: #333;
         }
+        .loading-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-container p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 20px;
+        }
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #d81b60;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+
+    <div id="loading-overlay" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>送信中...</p>
+    </div>
 
     <div class="container" id="form-container">
         <h1>Koi-Kukuri イベント申し込み</h1>
@@ -150,17 +186,14 @@
         
         <form id="applicationForm">
             <input type="hidden" id="lineUserId" name="lineUserId">
-
             <div class="form-group">
                 <label for="name">氏名</label>
                 <input type="text" id="name" name="name" required>
             </div>
-
             <div class="form-group">
                 <label for="age">年齢</label>
                 <input type="number" id="age" name="age" min="18" required>
             </div>
-
             <div class="form-group">
                 <label for="gender">性別</label>
                 <select id="gender" name="gender" required>
@@ -170,7 +203,6 @@
                     <option value="その他">その他</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label for="prefecture">都道府県</label>
                 <select id="prefecture" name="prefecture" required>
@@ -178,28 +210,24 @@
                     <option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label for="id-upload">身分証アップロード</label>
                 <input type="file" id="id-upload" name="id-upload" accept="image/*">
                 <p class="file-note">※テストプレイのため、提出は任意です。</p>
             </div>
-
             <div class="privacy-policy">
                 <p><strong>プライバシーポリシー</strong></p>
-                <p>（以下はサンプルです。）</p>
+                <p>（ここにプライバシーポリシーのテキストを記載します。以下はサンプルです。）</p>
                 <p>Koi-Kukuri運営事務局（以下「当事務局」といいます。）は、本サービスの利用者（以下「ユーザー」といいます。）の個人情報を、以下のとおり取り扱います。</p>
                 <p>第1条（個人情報の取得）<br>当事務局は、ユーザーが本サービスを利用するにあたり、氏名、年齢、性別、連絡先、その他申込フォームにご入力いただいた情報を取得します。</p>
                 <p>第2条（利用目的）<br>取得した個人情報は、イベント運営、本人確認、お問い合わせ対応、及びサービスの改善のために利用します。</p>
                 <p>第3条（第三者提供）<br>当事務局は、法令に基づく場合を除き、ユーザーの同意なく個人情報を第三者に提供しません。</p>
-                <p>（本番運用開始までに、運用に合わせて内容を修正・追記。）</p>
+                <p>（本番運用開始までに、貴社の運用に合わせて内容を修正・追記してください。）</p>
             </div>
-
             <div class="checkbox-group">
                 <input type="checkbox" id="privacy-consent" name="privacy-consent" required>
                 <label for="privacy-consent">プライバシーポリシーに同意します</label>
             </div>
-            
             <br>
             <button type="submit" class="submit-btn">申し込みを確定する</button>
         </form>
@@ -214,62 +242,53 @@
         </div>
     </div>
 
-
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         async function main() {
-            // LIFFの初期化
             await liff.init({ liffId: "2007667389-LbQyBzQX" });
-
             if (!liff.isLoggedIn()) {
-                // ログインしていない場合はログイン画面に誘導
                 liff.login();
             } else {
-                // ログイン済みの場合はプロフィール情報を取得
                 const profile = await liff.getProfile();
-                
-                // 隠しフィールドにLINE User IDをセット
                 document.getElementById('lineUserId').value = profile.userId;
-
-                // 氏名入力欄にLINEの表示名を初期値としてセット
                 document.getElementById('name').value = profile.displayName;
             }
         }
-
-        // ページの読み込みが完了したらmain関数を実行
         main();
 
-        // フォーム送信時の処理
         const form = document.getElementById('applicationForm');
         form.addEventListener('submit', function(event) {
-            event.preventDefault(); // デフォルトの送信をキャンセル
+            event.preventDefault();
+
+            const formContainer = document.getElementById('form-container');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const submissionComplete = document.getElementById('submission-complete');
+
+            formContainer.style.display = 'none';
+            loadingOverlay.style.display = 'flex';
 
             const formData = new FormData(form);
+            const endpoint = 'https://script.google.com/macros/s/AKfycbz3ee0UJ6LqnAx71oukukWyqdGAh7bdLhI373_lZfwor4L9L8FJZB4JgFx2s9KrWIjztA/exec';
 
-            // あなたが設定したエンドポイントURL
-            const endpoint = 'https://script.google.com/macros/s/AKfycbwAhWW4TdyCfDzeh8bHxa9mcKafz3iDpKeS-w6pIC7bHAH6IkxeIgd7FlTHQSPr9Gc9IA/exec';
-            
-            // fetchを使ってデータを送信する
             fetch(endpoint, {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                if(data.status === 'success'){
-                    // 成功したらフォームを非表示にし、完了メッセージを表示
-                    document.getElementById('form-container').style.display = 'none';
-                    document.getElementById('submission-complete').style.display = 'block';
+                loadingOverlay.style.display = 'none';
+                if (data.status === 'success') {
+                    submissionComplete.style.display = 'block';
                 } else {
-                    // Apps Script側でエラーが起きた場合 (例: シート名が違うなど)
                     alert('エラーが発生しました: ' + data.message);
+                    formContainer.style.display = 'block';
                 }
             })
             .catch((error) => {
-                // 通信自体に失敗した場合
+                loadingOverlay.style.display = 'none';
                 console.error('Error:', error);
                 alert('送信中にネットワークエラーが発生しました。');
+                formContainer.style.display = 'block';
             });
         });
     </script>
