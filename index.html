@@ -99,7 +99,6 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
         #submission-complete {
             text-align: center;
@@ -236,66 +235,67 @@
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-   // <script>タグの中身をこれに丸ごと置き換えてください
-async function main() {
-    await liff.init({ liffId: "2007667389-LbQyBzQX" });
-    if (!liff.isLoggedIn()) {
-        liff.login();
-    } else {
-        const profile = await liff.getProfile();
-        document.getElementById('lineUserId').value = profile.userId;
-        document.getElementById('name').value = profile.displayName;
-    }
-}
-main();
-
-const form = document.getElementById('applicationForm');
-form.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-
-    // ▼▼▼ ここからが修正箇所 ▼▼▼
-    // 送信する直前に、ファイルが本当にあるかを確認する
-    const uploadedFile = formData.get('id-upload');
-
-    // 画像が選択されているか、いないかでメッセージを出す
-    if (uploadedFile && uploadedFile.size > 0) {
-        alert("ファイルが確認できました！\nファイル名: " + uploadedFile.name + "\nこれから送信します。");
-    } else {
-        alert("ファイルが選択されていません。処理を続行します。");
-    }
-    // ▲▲▲ ここまでが修正箇所 ▲▲▲
-
-    const formContainer = document.getElementById('form-container');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const submissionComplete = document.getElementById('submission-complete');
-    
-    formContainer.style.display = 'none';
-    loadingOverlay.style.display = 'flex';
-    
-    const endpoint = 'https://script.google.com/macros/s/AKfycbwOdJT6DvG-eaFBg_6CNm2bCIg_6PQpKW7BoPua1qHXA1sIOKfst9bvAXfkaWkRNaH0cA/exec';
-
-    fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-        loadingOverlay.style.display = 'none';
-        if (data.status === 'success') {
-            submissionComplete.style.display = 'block';
-        } else {
-            alert('エラーが発生しました: ' + data.message);
-            formContainer.style.display = 'block';
+    <script>
+        async function main() {
+            await liff.init({ liffId: "2007667389-LbQyBzQX" });
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                const profile = await liff.getProfile();
+                document.getElementById('lineUserId').value = profile.userId;
+                document.getElementById('name').value = profile.displayName;
+            }
         }
-    })
-    .catch((error) => {
-        loadingOverlay.style.display = 'none';
-        console.error('Error:', error);
-        alert('送信中にネットワークエラーが発生しました。');
-        formContainer.style.display = 'block';
-    });
-});
+        main();
+
+        const form = document.getElementById('applicationForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            // ▼▼▼ ここからが修正箇所 ▼▼▼
+            // 送信する直前に、ファイルが本当にあるかを確認する
+            const uploadedFile = formData.get('id-upload');
+
+            // 画像が選択されているか、いないかでメッセージを出す
+            if (uploadedFile && uploadedFile.size > 0) {
+                alert("ファイルが確認できました！\nファイル名: " + uploadedFile.name + "\nこれから送信します。");
+            } else {
+                alert("ファイルが選択されていません。処理を続行します。");
+            }
+            // ▲▲▲ ここまでが修正箇所 ▲▲▲
+
+            const formContainer = document.getElementById('form-container');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const submissionComplete = document.getElementById('submission-complete');
+            
+            formContainer.style.display = 'none';
+            loadingOverlay.style.display = 'flex';
+            
+            const endpoint = 'https://script.google.com/macros/s/AKfycbwOdJT6DvG-eaFBg_6CNm2bCIg_6PQpKW7BoPua1qHXA1sIOKfst9bvAXfkaWkRNaH0cA/exec';
+
+            fetch(endpoint, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingOverlay.style.display = 'none';
+                if (data.status === 'success') {
+                    submissionComplete.style.display = 'block';
+                } else {
+                    alert('エラーが発生しました: ' + data.message);
+                    formContainer.style.display = 'block';
+                }
+            })
+            .catch((error) => {
+                loadingOverlay.style.display = 'none';
+                console.error('Error:', error);
+                alert('送信中にネットワークエラーが発生しました。');
+                formContainer.style.display = 'block';
+            });
+        });
+    </script>
 </body>
 </html>
