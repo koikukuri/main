@@ -26,7 +26,6 @@
         .profile-btn { background-color: #d81b60; color: white; }
         .later-btn { background-color: #eee; color: #333; }
         
-        /* ▼▼▼ ローディング画面のスタイル（ここから） ▼▼▼ */
         .loading-container {
             display: none;
             position: fixed;
@@ -46,24 +45,21 @@
             color: #555;
             margin-top: 20px;
         }
-        /* ハートを周回させるためのラッパー */
         .spinner-wrapper {
             position: relative;
             width: 80px;
             height: 80px;
         }
-        /* 静的な円の軌道 */
         .spinner-track {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: 6px solid #fdeaf1; /* 薄いピンクの軌道 */
+            border: 6px solid #fdeaf1;
             border-radius: 50%;
             box-sizing: border-box;
         }
-        /* ハートを乗せて回転する部分 */
         .spinner-rotor {
             position: absolute;
             top: 0;
@@ -72,33 +68,27 @@
             height: 100%;
             animation: rotate-rotor 2s linear infinite;
         }
-        /* ハートのスタイル */
         .loading-heart {
             position: absolute;
-            top: -11px; /* ハートが軌道の上に乗るように調整 */
+            top: -11px;
             left: 50%;
             transform: translateX(-50%);
-            width: 22px; /* ハートのサイズを調整 */
+            width: 22px;
             height: 22px;
-            fill: #d81b60; /* ハートの色 */
-            /* ハート自体が回転しないように逆回転させる */
+            fill: #d81b60;
             animation: counter-rotate-rotor 2s linear infinite;
         }
-        /* ローターを回転させるアニメーション */
         @keyframes rotate-rotor {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        /* ハートを逆回転させて向きを維持するアニメーション */
         @keyframes counter-rotate-rotor {
             from { transform: rotate(0deg); }
             to { transform: rotate(-360deg); }
         }
-        /* ▲▲▲ ローディング画面のスタイル（ここまで） ▲▲▲ */
     </style>
 </head>
 <body>
-    <!-- ▼▼▼ ローディング画面のHTML（ここから） ▼▼▼ -->
     <div id="loading-overlay" class="loading-container">
         <div class="spinner-wrapper">
             <div class="spinner-track"></div>
@@ -108,7 +98,6 @@
         </div>
         <p>送信中...</p>
     </div>
-    <!-- ▲▲▲ ローディング画面のHTML（ここまで） ▲▲▲ -->
 
     <div class="container" id="form-container">
         <h1>Koi-Kukuri イベント申し込み</h1>
@@ -130,8 +119,8 @@
         <h2>お申し込み<br>ありがとうございます！</h2>
         <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
         <div class="button-group">
-            <!-- ▼▼▼ ここにプロフィール登録用LIFFアプリのURLを設定してください ▼▼▼ -->
-            <a href="YOUR_PROFILE_REGISTRATION_URL" class="profile-btn">プロフィール登録に進む</a>
+            <!-- ▼▼▼ ここを修正しました ▼▼▼ -->
+            <a href="https://liff.line.me/【ここにプロフィール登録用の新しいLIFF_IDを設定】" class="profile-btn">プロフィール登録に進む</a>
             <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
         </div>
     </div>
@@ -214,4 +203,4 @@
         }
     </script>
 </body>
-</html>
+</ht
