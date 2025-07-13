@@ -119,7 +119,6 @@
         <h2>お申し込み<br>ありがとうございます！</h2>
         <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
         <div class="button-group">
-            <!-- ▼▼▼ ここを修正しました ▼▼▼ -->
             <a href="https://liff.line.me/【ここにプロフィール登録用の新しいLIFF_IDを設定】" class="profile-btn">プロフィール登録に進む</a>
             <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
         </div>
@@ -128,10 +127,13 @@
     <script>
         async function main() {
             await liff.init({ liffId: "2007667389-LbQyBzQX" });
-            if (!liff.isLoggedIn()) { liff.login(); } else {
+            if (!liff.isLoggedIn()) { 
+                liff.login(); 
+            } else {
                 const profile = await liff.getProfile();
                 document.getElementById('lineUserId').value = profile.userId;
-                document.getElementById('name').value = profile.displayName;
+                // ▼▼▼【修正箇所】LINEの表示名を自動入力する行を削除しました ▼▼▼
+                // document.getElementById('name').value = profile.displayName;
             }
         }
         main();
@@ -178,22 +180,15 @@
             
             fetch(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(resData => {
-                const loadingOverlay = document.getElementById('loading-overlay');
-                const formContainer = document.getElementById('form-container');
-                const submissionComplete = document.getElementById('submission-complete');
-                loadingOverlay.style.display = 'none';
-
-                if (resData.status === 'success') {
-                    submissionComplete.style.display = 'block';
-                } else {
-                    alert('エラーが発生しました: ' + (resData.message || '不明なエラー'));
-                    formContainer.style.display = 'block';
-                }
+            .then(() => {
+                document.getElementById('loading-overlay').style.display = 'none';
+                document.getElementById('submission-complete').style.display = 'block';
             })
             .catch(error => {
                 document.getElementById('loading-overlay').style.display = 'none';
@@ -203,4 +198,4 @@
         }
     </script>
 </body>
-</ht
+</html>
