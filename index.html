@@ -46,27 +46,51 @@
             color: #555;
             margin-top: 20px;
         }
-        /* ハートを周回させるためのコンテナ */
-        .spinner-container {
+        /* ハートを周回させるためのラッパー */
+        .spinner-wrapper {
+            position: relative;
             width: 80px;
             height: 80px;
-            animation: rotate-container 2s linear infinite;
+        }
+        /* 静的な円の軌道 */
+        .spinner-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 6px solid #fdeaf1; /* 薄いピンクの軌道 */
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+        /* ハートを乗せて回転する部分 */
+        .spinner-rotor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: rotate-rotor 2s linear infinite;
         }
         /* ハートのスタイル */
         .loading-heart {
-            width: 30px; /* ハートのサイズを調整 */
-            height: 30px;
+            position: absolute;
+            top: -11px; /* ハートが軌道の上に乗るように調整 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px; /* ハートのサイズを調整 */
+            height: 22px;
             fill: #d81b60; /* ハートの色 */
             /* ハート自体が回転しないように逆回転させる */
-            animation: counter-rotate-heart 2s linear infinite;
+            animation: counter-rotate-rotor 2s linear infinite;
         }
-        /* コンテナを回転させるアニメーション */
-        @keyframes rotate-container {
+        /* ローターを回転させるアニメーション */
+        @keyframes rotate-rotor {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         /* ハートを逆回転させて向きを維持するアニメーション */
-        @keyframes counter-rotate-heart {
+        @keyframes counter-rotate-rotor {
             from { transform: rotate(0deg); }
             to { transform: rotate(-360deg); }
         }
@@ -76,9 +100,11 @@
 <body>
     <!-- ▼▼▼ ローディング画面のHTML（ここから） ▼▼▼ -->
     <div id="loading-overlay" class="loading-container">
-        <!-- ハートが円を描いて回るアニメーションコンテナ -->
-        <div class="spinner-container">
-            <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+        <div class="spinner-wrapper">
+            <div class="spinner-track"></div>
+            <div class="spinner-rotor">
+                <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+            </div>
         </div>
         <p>送信中...</p>
     </div>
