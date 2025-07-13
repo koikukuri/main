@@ -25,17 +25,52 @@
         .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
         .profile-btn { background-color: #d81b60; color: white; }
         .later-btn { background-color: #eee; color: #333; }
-        .loading-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
-        .loading-container p { font-size: 18px; font-weight: bold; color: #555; margin-top: 20px; }
-        .loading-spinner { border: 8px solid #f3f3f3; border-top: 8px solid #d81b60; border-radius: 50%; width: 60px; height: 60px; animation: spin 1.5s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* ▼▼▼ ローディング画面のスタイル（ここから） ▼▼▼ */
+        .loading-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-container p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 20px;
+        }
+        /* SVGハートのスタイル */
+        .loading-heart {
+            width: 80px;
+            height: 80px;
+            fill: #d81b60; /* ハートの色 */
+            animation: spin-heart 1.2s ease-in-out infinite;
+        }
+        /* ハートを回転・拡大縮小させるアニメーション */
+        @keyframes spin-heart {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        /* ▲▲▲ ローディング画面のスタイル（ここまで） ▲▲▲ */
     </style>
 </head>
 <body>
+    <!-- ▼▼▼ ローディング画面のHTML（ここから） ▼▼▼ -->
     <div id="loading-overlay" class="loading-container">
-        <div class="loading-spinner"></div>
+        <!-- SVGのハートアイコンに変更 -->
+        <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
         <p>送信中...</p>
     </div>
+    <!-- ▲▲▲ ローディング画面のHTML（ここまで） ▲▲▲ -->
+
     <div class="container" id="form-container">
         <h1>Koi-Kukuri イベント申し込み</h1>
         <p class="intro-text">イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。</p>
@@ -55,7 +90,11 @@
     <div class="container" id="submission-complete" style="display: none;">
         <h2>お申し込み<br>ありがとうございます！</h2>
         <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
-        <div class="button-group"><a href="YOUR_PROFILE_REGISTRATION_URL" class="profile-btn">プロフィール登録に進む</a><a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a></div>
+        <div class="button-group">
+            <!-- ▼▼▼ ここにプロフィール登録用LIFFアプリのURLを設定してください ▼▼▼ -->
+            <a href="YOUR_PROFILE_REGISTRATION_URL" class="profile-btn">プロフィール登録に進む</a>
+            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
+        </div>
     </div>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
@@ -80,7 +119,6 @@
             const fileInput = document.getElementById('id-upload');
             const file = fileInput.files[0];
 
-            // 全てのフォームデータを集める
             const data = {
                 lineUserId: document.getElementById('lineUserId').value,
                 name: document.getElementById('name').value,
@@ -89,15 +127,13 @@
                 prefecture: document.getElementById('prefecture').value,
             };
 
-            // ファイルが選択されている場合
             if (file) {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function() {
-                    // ファイルをBase64文字列に変換してデータに追加
                     data.fileData = reader.result;
                     data.fileName = file.name;
-                    sendData(data); // データ送信を実行
+                    sendData(data);
                 };
                 reader.onerror = function() {
                     alert('ファイルの読み込みに失敗しました。');
@@ -105,42 +141,33 @@
                     document.getElementById('form-container').style.display = 'block';
                 };
             } else {
-                // ファイルが選択されていない場合
-                sendData(data); // そのままデータ送信を実行
+                sendData(data);
             }
         });
 
         function sendData(data) {
-            // ▼▼▼ 新しいURLに更新しました ▼▼▼
             const endpoint = 'https://script.google.com/macros/s/AKfycbzxg9uF_dSI5RJpM3OMTnNqPcw8A3irsUPMSOa-nf8Ovn5lVvdwCd1COPod1KdrRfpv_A/exec';
             
             fetch(endpoint, {
                 method: 'POST',
-                //【重要】この送信方法では、mode: 'no-cors' は不要です
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8', // テキストとして送信
-                },
-                body: JSON.stringify(data) // データをJSON文字列に変換
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
             })
-            .then(response => response.json()) // サーバーからの応答をJSONとして解釈
+            .then(response => response.json())
             .then(resData => {
-                // サーバーからの応答に基づいて処理を分岐
                 const loadingOverlay = document.getElementById('loading-overlay');
                 const formContainer = document.getElementById('form-container');
                 const submissionComplete = document.getElementById('submission-complete');
-
                 loadingOverlay.style.display = 'none';
 
                 if (resData.status === 'success') {
                     submissionComplete.style.display = 'block';
                 } else {
-                    // サーバー側でエラーが起きた場合
                     alert('エラーが発生しました: ' + (resData.message || '不明なエラー'));
                     formContainer.style.display = 'block';
                 }
             })
             .catch(error => {
-                // ネットワークエラーなど、通信自体に失敗した場合
                 document.getElementById('loading-overlay').style.display = 'none';
                 document.getElementById('form-container').style.display = 'block';
                 alert('送信中にエラーが発生しました: ' + error);
