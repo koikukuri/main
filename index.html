@@ -99,6 +99,16 @@
         <p>送信中...</p>
     </div>
 
+    <!-- ▼▼▼【追加】外部ブラウザで開かれた場合に表示する画面 ▼▼▼ -->
+    <div class="container" id="external-browser-container" style="display: none;">
+        <h1>LINEで開いてください</h1>
+        <p class="intro-text" style="text-align: left;">
+            このサービスはLINEアプリでご利用いただけます。<br>下のボタンを押してLINEで開いてください。
+        </p>
+        <br>
+        <a href="#" id="open-in-line-btn" class="add-friend-btn">LINEで開く</a>
+    </div>
+
     <!-- ▼▼▼【追加】友だち追加を促す画面 ▼▼▼ -->
     <div class="container" id="add-friend-container" style="display: none;">
         <h1>はじめに</h1>
@@ -141,10 +151,13 @@
             try {
                 await liff.init({ liffId: liffId });
 
+                // ▼▼▼【重要】外部ブラウザで開かれた場合の処理を修正しました ▼▼▼
                 if (!liff.isInClient()) {
-                    alert("このページはLINEアプリで開いてください。");
-                    window.location = `https://liff.line.me/${liffId}`;
-                    return;
+                    // 外部ブラウザ用の案内画面を表示
+                    document.getElementById('external-browser-container').style.display = 'block';
+                    // ボタンに正しいLIFF URLを設定
+                    document.getElementById('open-in-line-btn').href = `https://liff.line.me/${liffId}`;
+                    return; // これ以上処理を進めない
                 }
 
                 if (!liff.isLoggedIn()) {
