@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール登録</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d81b60; font-size: 24px; margin-bottom: 10px; }
+        .form-description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        label .required { color: #d81b60; font-size: 12px; margin-left: 5px; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input[type="file"] { padding: 5px; }
+        .file-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        textarea { height: 120px; resize: vertical; }
+        .submit-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        #submission-complete { text-align: center; padding: 40px 20px; display: none; }
+        #submission-complete h2 { color: #d81b60; }
+    </style>
+</head>
+<body>
+    <div class="container" id="form-container">
+        <h1>プロフィール登録</h1>
+        <p class="form-description">イベント内で参加者に公開されるプロフィールです。</p>
+        
+        <form id="profileForm">
+            <input type="hidden" id="lineUserId" name="lineUserId">
+            
+            <div class="form-group">
+                <label for="nickname">ニックネーム<span class="required">必須</span></label>
+                <input type="text" id="nickname" name="nickname" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">年齢<span class="required">必須</span></label>
+                <input type="number" id="age" name="age" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">性別<span class="required">必須</span></label>
+                <select id="gender" name="gender" required>
+                    <option value="">選択してください</option>
+                    <option value="男性">男性</option>
+                    <option value="女性">女性</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="occupation">職業</label>
+                <input type="text" id="occupation" name="occupation">
+            </div>
+
+            <div class="form-group">
+                <label for="hobbies">趣味</label>
+                <input type="text" id="hobbies" name="hobbies" placeholder="例：映画鑑賞, 旅行, カフェ巡り">
+            </div>
+
+            <div class="form-group">
+                <label for="profile-image">プロフィール画像<span style="font-size:12px; color:#666;">（イラストでも可）</span></label>
+                <input type="file" id="profile-image" name="profile-image" accept="image/*">
+                <p class="file-note">イメージが伝わる画像を登録しましょう</p>
+            </div>
+
+            <div class="form-group">
+                <label for="introduction">自己紹介</label>
+                <textarea id="introduction" name="introduction" rows="4" placeholder="はじめまして！休日はカフェで本を読んだり、新しいお店を開拓するのが好きです。人見知りですが、話すのは好きなので気軽に声をかけてもらえると嬉しいです。よろしくお願いします！"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">プロフィールを登録する</button>
+        </form>
+    </div>
+
+    <div class="container" id="submission-complete">
+        <h2>登録ありがとうございます！</h2>
+        <p>プロフィールの登録が完了しました。<br>ウィンドウを閉じてください。</p>
+    </div>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        async function main() {
+            // ▼▼▼ このLIFFアプリ用に、新しいLIFF IDを設定してください ▼▼▼
+            await liff.init({ liffId: "YOUR_NEW_LIFF_ID_HERE" });
+
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                const profile = await liff.getProfile();
+                document.getElementById('lineUserId').value = profile.userId;
+                document.getElementById('nickname').value = profile.displayName;
+            }
+        }
+        main();
+
+        const form = document.getElementById('profileForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('profile-image');
+            const file = fileInput.files[0];
+
+            const data = {
+                lineUserId: document.getElementById('lineUserId').value,
+                nickname: document.getElementById('nickname').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                occupation: document.getElementById('occupation').value,
+                hobbies: document.getElementById('hobbies').value,
+                introduction: document.getElementById('introduction').value,
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function() {
+                    data.fileData = reader.result;
+                    data.fileName = file.name;
+                    sendData(data);
+                };
+                reader.onerror = function() {
+                    alert('ファイルの読み込みに失敗しました。');
+                };
+            } else {
+                sendData(data);
+            }
+        });
+
+        function sendData(data) {
+            // ▼▼▼ ご提示いただいた新しいURLに更新しました ▼▼▼
+            const endpoint = 'https://script.google.com/macros/s/AKfycbyKpmAPE5sI2IEKmp998uVSr8zWO7OLfrEO50A_ZA6ZdW3zKM8ndj1PfcRDWMnBU3S9Tw/exec';
+            
+            fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(resData => {
+                if (resData.status === 'success') {
+                    document.getElementById('form-container').style.display = 'none';
+                    document.getElementById('submission-complete').style.display = 'block';
+                    setTimeout(() => { liff.closeWindow(); }, 3000);
+                } else {
+                    alert('登録に失敗しました: ' + (resData.message || '不明なエラー'));
+                }
+            })
+            .catch(error => {
+                alert('送信中にエラーが発生しました。');
+            });
+        }
+    </script>
+</body>
+</html>
