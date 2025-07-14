@@ -100,17 +100,7 @@
         <p class="intro-text">LIFFアプリを準備しています。<br>少々お待ちください。</p>
     </div>
 
-    <!-- 2. 外部ブラウザで開かれた場合の案内画面 -->
-    <div id="external-browser-view" class="container view">
-        <h1>LINEで開いてください</h1>
-        <p class="intro-text" style="text-align: left;">
-            このサービスはLINEアプリでご利用いただけます。<br>下のボタンを押してLINEで開いてください。
-        </p>
-        <br>
-        <a href="#" id="open-in-line-btn" class="add-friend-btn">LINEで開く</a>
-    </div>
-
-    <!-- 3. 友だち追加を促す画面 -->
+    <!-- 2. 友だち追加を促す画面 -->
     <div id="add-friend-view" class="container view">
         <h1>はじめに</h1>
         <p class="intro-text" style="text-align: left;">
@@ -120,7 +110,7 @@
         <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
     </div>
 
-    <!-- 4. メインの申し込みフォーム画面 -->
+    <!-- 3. メインの申し込みフォーム画面 -->
     <div id="form-view" class="container view">
         <h1>Koi-Kukuri イベント申し込み</h1>
         <p class="intro-text">イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。</p>
@@ -138,7 +128,7 @@
         </form>
     </div>
 
-    <!-- 5. 送信完了画面 -->
+    <!-- 4. 送信完了画面 -->
     <div id="submission-complete-view" class="container view">
         <h2>お申し込み<br>ありがとうございます！</h2>
         <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
@@ -168,7 +158,6 @@
             // 画面要素への参照
             const views = {
                 loading: document.getElementById('loading-view'),
-                external: document.getElementById('external-browser-view'),
                 addFriend: document.getElementById('add-friend-view'),
                 form: document.getElementById('form-view'),
                 complete: document.getElementById('submission-complete-view')
@@ -182,16 +171,16 @@
                 views[viewName].style.display = 'block';
             };
 
+            //【修正】外部ブラウザで開かれた場合は、何もせずに処理を終了します。
+            // これにより、ユーザーはOSが表示する「LINEで開く」バナーを操作する時間ができます。
+            if (!liff.isInClient()) {
+                // 画面には初期状態の「読み込み中...」が表示されたままになります。
+                return;
+            }
+
             try {
                 // LIFFの初期化
                 await liff.init({ liffId: liffId });
-
-                // 外部ブラウザかどうかを判定
-                if (!liff.isInClient()) {
-                    showView('external');
-                    document.getElementById('open-in-line-btn').href = `https://liff.line.me/${liffId}`;
-                    return;
-                }
 
                 // ログイン状態を判定
                 if (!liff.isLoggedIn()) {
