@@ -155,11 +155,8 @@
                 if (!liff.isInClient()) {
                     // 外部ブラウザ用の案内画面を表示
                     document.getElementById('external-browser-container').style.display = 'block';
-                    // ボタンにクリックイベントを設定
-                    document.getElementById('open-in-line-btn').addEventListener('click', function (e) {
-                        e.preventDefault();
-                        window.location.href = `https://liff.line.me/${liffId}`;
-                    });
+                    // ボタンのリンク先を直接LIFF URLに設定
+                    document.getElementById('open-in-line-btn').href = `https://liff.line.me/${liffId}`;
                     return; // これ以上処理を進めない
                 }
 
