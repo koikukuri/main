@@ -213,7 +213,8 @@
 
             } catch (err) {
                 console.error(err);
-                alert("エラーが発生しました。画面を再読み込みしてください。");
+                showView('loading'); // エラー時は初期画面に戻す
+                views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。LINEアプリを再起動するか、時間をおいて再度お試しください。</p><p><small>エラー: ${err.message}</small></p>`;
             }
         }
 
