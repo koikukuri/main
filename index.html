@@ -1,201 +1,76 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koi-Kukuri イベント申し込みフォーム</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #d81b60; font-size: 24px; margin-bottom: 10px; }
-        .intro-text { text-align: center; font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 20px; }
-        .event-details { text-align: center; background-color: #fffde7; border: 1px dashed #fbc02d; padding: 12px; border-radius: 8px; margin-bottom: 25px; font-size: 16px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="file"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        input[type="file"] { padding: 5px; }
-        .file-note { font-size: 12px; color: #666; margin-top: 5px; }
-        .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
-        .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
-        .checkbox-group input { margin-right: 10px; }
-        .submit-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        #submission-complete { text-align: center; padding: 40px 20px; }
-        #submission-complete h2 { color: #d81b60; }
-        .button-group { margin-top: 20px; }
-        .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
-        .profile-btn { background-color: #d81b60; color: white; }
-        .later-btn { background-color: #eee; color: #333; }
-        
-        .loading-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .loading-container p {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            margin-top: 20px;
-        }
-        .spinner-wrapper {
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .spinner-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 6px solid #fdeaf1;
-            border-radius: 50%;
-            box-sizing: border-box;
-        }
-        .spinner-rotor {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            animation: rotate-rotor 2s linear infinite;
-        }
-        .loading-heart {
-            position: absolute;
-            top: -11px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 22px;
-            fill: #d81b60;
-            animation: counter-rotate-rotor 2s linear infinite;
-        }
-        @keyframes rotate-rotor {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes counter-rotate-rotor {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(-360deg); }
-        }
-    </style>
-</head>
-<body>
-    <div id="loading-overlay" class="loading-container">
-        <div class="spinner-wrapper">
-            <div class="spinner-track"></div>
-            <div class="spinner-rotor">
-                <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
-            </div>
-        </div>
-        <p>送信中...</p>
-    </div>
+// 【最終診断コード】成功・失敗に関わらず、必ずログをメールで送信します
 
-    <div class="container" id="form-container">
-        <h1>Koi-Kukuri イベント申し込み</h1>
-        <p class="intro-text">イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。</p>
-        <div class="event-details"><strong>開催日時:</strong> 2025年8月3日(日) 14:00〜16:00</div>
-        <form id="applicationForm">
-            <input type="hidden" id="lineUserId" name="lineUserId">
-            <div class="form-group"><label for="name">氏名</label><input type="text" id="name" name="name" required></div>
-            <div class="form-group"><label for="age">年齢</label><input type="number" id="age" name="age" min="18" required></div>
-            <div class="form-group"><label for="gender">性別</label><select id="gender" name="gender" required><option value="">選択してください</option><option value="男性">男性</option><option value="女性">女性</option><option value="その他">その他</option></select></div>
-            <div class="form-group"><label for="prefecture">都道府県</label><select id="prefecture" name="prefecture" required><option value="">選択してください</option><option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option></select></div>
-            <div class="form-group"><label for="id-upload">身分証アップロード</label><input type="file" id="id-upload" name="id-upload" accept="image/*"><p class="file-note">※テストプレイのため、提出は任意です。</p></div>
-            <div class="privacy-policy"><p><strong>プライバシーポリシー</strong></p><p>（ここにプライバシーポリシーのテキストを記載します。以下はサンプルです。）</p><p>Koi-Kukuri運営事務局（以下「当事務局」といいます。）は、本サービスの利用者（以下「ユーザー」といいます。）の個人情報を、以下のとおり取り扱います。</p><p>第1条（個人情報の取得）<br>当事務局は、ユーザーが本サービスを利用するにあたり、氏名、年齢、性別、連絡先、その他申込フォームにご入力いただいた情報を取得します。</p><p>第2条（利用目的）<br>取得した個人情報は、イベント運営、本人確認、お問い合わせ対応、及びサービスの改善のために利用します。</p><p>第3条（第三者提供）<br>当事務局は、法令に基づく場合を除き、ユーザーの同意なく個人情報を第三者に提供しません。</p><p>（本番運用開始までに、貴社の運用に合わせて内容を修正・追記してください。）</p></div>
-            <div class="checkbox-group"><input type="checkbox" id="privacy-consent" name="privacy-consent" required><label for="privacy-consent">プライバシーポリシーに同意します</label></div><br>
-            <button type="submit" class="submit-btn">申し込みを確定する</button>
-        </form>
-    </div>
-    <div class="container" id="submission-complete" style="display: none;">
-        <h2>お申し込み<br>ありがとうございます！</h2>
-        <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
-        <div class="button-group">
-            <a href="https://liff.line.me/【ここにプロフィール登録用の新しいLIFF_IDを設定】" class="profile-btn">プロフィール登録に進む</a>
-            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
-        </div>
-    </div>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
-        async function main() {
-            await liff.init({ liffId: "2007667389-LbQyBzQX" });
-            if (!liff.isLoggedIn()) { 
-                liff.login(); 
-            } else {
-                const profile = await liff.getProfile();
-                document.getElementById('lineUserId').value = profile.userId;
-                // ▼▼▼【修正箇所】LINEの表示名を自動入力する行を削除しました ▼▼▼
-                // document.getElementById('name').value = profile.displayName;
-            }
-        }
-        main();
+function doPost(e) {
+  let log = "--- Koi-Kukuri 診断ログ ---\n\n";
+  try {
+    log += "リクエスト受信時刻: " + new Date() + "\n\n";
+    log += "受信データ:\n" + e.postData.contents + "\n\n";
 
-        const form = document.getElementById('applicationForm');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const loadingOverlay = document.getElementById('loading-overlay');
-            loadingOverlay.style.display = 'flex';
-            document.getElementById('form-container').style.display = 'none';
+    // --- ここから本番の処理を開始 ---
+    const payload = JSON.parse(e.postData.contents);
+    log += "データ解析成功。\n";
 
-            const fileInput = document.getElementById('id-upload');
-            const file = fileInput.files[0];
+    const LINE_CHANNEL_ACCESS_TOKEN = "ndA7uwQ0+8U5Ob6ggRITQ35b6Z4vzpmyjRQU9njqFDCsR7TIA5j7zXCH5pD/Kk63P9ixCUg3wn/SzYY9V2/VYLWXvzLO4nalpknxlipbZ+narhx8WK1Fz4s7YO1vofv7nzhGZ9z9SN6nAKd4ZJ0p3AdB04t89/1O/w1cDnyilFU=";
+    const FOLDER_ID = "16-GKXIlzDUh76fqGXQu6Adubh8RFjZJ6";
+    
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("フォーム回答"); 
+    if (!sheet) { 
+      throw new Error("「フォーム回答」という名前のシートが見つかりません。"); 
+    }
+    log += "シート取得成功。\n";
 
-            const data = {
-                lineUserId: document.getElementById('lineUserId').value,
-                name: document.getElementById('name').value,
-                age: document.getElementById('age').value,
-                gender: document.getElementById('gender').value,
-                prefecture: document.getElementById('prefecture').value,
-            };
+    let imageUrl = "なし";
+    let fileBlob = null;
 
-            if (file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function() {
-                    data.fileData = reader.result;
-                    data.fileName = file.name;
-                    sendData(data);
-                };
-                reader.onerror = function() {
-                    alert('ファイルの読み込みに失敗しました。');
-                    loadingOverlay.style.display = 'none';
-                    document.getElementById('form-container').style.display = 'block';
-                };
-            } else {
-                sendData(data);
-            }
-        });
+    if (payload.fileData) {
+      const [meta, base64] = payload.fileData.split(',');
+      const mimeType = meta.split(';')[0].split(':')[1];
+      const decodedData = Utilities.base64Decode(base64);
+      fileBlob = Utilities.newBlob(decodedData, mimeType, payload.fileName);
+      log += "画像データの復元成功。\n";
+    }
+    
+    if (fileBlob) {
+      const folder = DriveApp.getFolderById(FOLDER_ID);
+      const file = folder.createFile(fileBlob); // ファイル名は復元時に設定済み
+      imageUrl = file.getUrl();
+      log += "ドライブへの保存成功。\n";
+    }
 
-        function sendData(data) {
-            const endpoint = 'https://script.google.com/macros/s/AKfycbyLGE9OBTeNjcTwnFz_Z3YLfVu-qVaWyyiPc7cwI2JAmN15NgTC_PPeqyCr3fzA63fiHw/exec';
-            
-            fetch(endpoint, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(() => {
-                document.getElementById('loading-overlay').style.display = 'none';
-                document.getElementById('submission-complete').style.display = 'block';
-            })
-            .catch(error => {
-                document.getElementById('loading-overlay').style.display = 'none';
-                document.getElementById('form-container').style.display = 'block';
-                alert('送信中にエラーが発生しました: ' + error);
-            });
-        }
-    </script>
-</body>
-</html>
+    sheet.appendRow([ new Date(), payload.lineUserId, payload.name, payload.age, payload.gender, payload.prefecture, imageUrl ]);
+    log += "スプレッドシートへの書き込み成功。\n";
+
+    const recipient = "kawai@coconazo.com";
+    const subject = "【Koi-Kukuri】新規申し込みがありました";
+    const mailHtmlBody = `<h2>新規申し込みがありました</h2><p><strong>氏名:</strong> ${payload.name || ''}</p><p><strong>LINE User ID:</strong> ${payload.lineUserId || ''}</p><p><strong>身分証URL:</strong> <a href="${imageUrl}">${imageUrl}</a></p>`;
+    const mailOptions = { htmlBody: mailHtmlBody };
+    if (fileBlob) { 
+      mailOptions.attachments = [fileBlob]; 
+    }
+    MailApp.sendEmail(recipient, subject, "", mailOptions);
+    log += "管理者へのメール通知成功。\n";
+
+    const linePushUrl = "https://api.line.me/v2/bot/message/push";
+    const lineMessage = `お申し込みを受け付けました。\n\n【開催日時】\n2025年8月3日(日) 14:00〜16:00\n\nご参加お待ちしております！`;
+    const linePayload = { to: payload.lineUserId, messages: [{ type: "text", text: lineMessage }] };
+    const lineOptions = { method: "post", headers: { "Content-Type": "application/json", Authorization: "Bearer " + LINE_CHANNEL_ACCESS_TOKEN }, payload: JSON.stringify(linePayload), muteHttpExceptions: true };
+    UrlFetchApp.fetch(linePushUrl, lineOptions);
+    log += "ユーザーへのLINE通知成功。\n";
+
+    // 全ての処理が成功したことをメールで報告
+    MailApp.sendEmail(recipient, "【Koi-Kukuri】処理成功ログ", log);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    // エラーが発生した場合、その内容をメールで報告
+    log += "\n\n--- エラー発生 ---\n";
+    log += "エラーメッセージ: " + err.message + "\n";
+    log += "エラー箇所: " + err.stack + "\n";
+    
+    const recipient = "kawai@coconazo.com"; // あなたのメールアドレス
+    MailApp.sendEmail(recipient, "【重要・エラー発生】Koi-Kukuri申し込みフォーム", log);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
