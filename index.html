@@ -147,15 +147,24 @@
     </div>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        async function main() {
-            const liffId = "2007667389-LbQyBzQX";
+        // ▼▼▼【重要】ロジック全体を修正しました ▼▼▼
+        const liffId = "2007667389-LbQyBzQX";
+
+        // ページが読み込まれたら、まずブラウザを判定する
+        document.addEventListener('DOMContentLoaded', function() {
+            // User Agentを見てLINEのブラウザかどうかを判定
+            if (/Line/i.test(navigator.userAgent)) {
+                // LINE内ブラウザの場合、LIFFの初期化を開始
+                initializeLiff();
+            } else {
+                // 外部ブラウザの場合、案内画面を表示
+                document.getElementById('external-browser-container').style.display = 'block';
+            }
+        });
+
+        async function initializeLiff() {
             try {
                 await liff.init({ liffId: liffId });
-
-                if (!liff.isInClient()) {
-                    document.getElementById('external-browser-container').style.display = 'block';
-                    return; 
-                }
 
                 if (!liff.isLoggedIn()) {
                     liff.login();
@@ -174,7 +183,7 @@
                 alert("LIFFアプリの初期化中にエラーが発生しました。");
             }
         }
-        main();
+        // ▲▲▲ ここまで ▲▲▲
 
         const form = document.getElementById('applicationForm');
         form.addEventListener('submit', function(event) {
