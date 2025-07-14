@@ -28,9 +28,82 @@
         .submit-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         #submission-complete { text-align: center; padding: 40px 20px; display: none; }
         #submission-complete h2 { color: #d81b60; }
+
+        /* ▼▼▼ ローディング画面のスタイルを追加 ▼▼▼ */
+        .loading-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-container p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 20px;
+        }
+        .spinner-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        .spinner-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 6px solid #fdeaf1;
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+        .spinner-rotor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: rotate-rotor 2s linear infinite;
+        }
+        .loading-heart {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            fill: #d81b60;
+            animation: counter-rotate-rotor 2s linear infinite;
+        }
+        @keyframes rotate-rotor {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes counter-rotate-rotor {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- ▼▼▼ ローディング画面のHTMLを追加 ▼▼▼ -->
+    <div id="loading-overlay" class="loading-container">
+        <div class="spinner-wrapper">
+            <div class="spinner-track"></div>
+            <div class="spinner-rotor">
+                <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+            </div>
+        </div>
+        <p>登録中...</p>
+    </div>
+
     <div class="container" id="form-container">
         <h1>プロフィール登録</h1>
         <p class="form-description">イベント内で参加者に公開されるプロフィールです。</p>
@@ -91,14 +164,16 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         async function main() {
-            // ▼▼▼ このLIFFアプリ用に、新しいLIFF IDを設定してください ▼▼▼
+            // ▼▼▼【重要】プロフィール登録用に作成した、新しいLIFF IDに必ず書き換えてください ▼▼▼
             await liff.init({ liffId: "YOUR_NEW_LIFF_ID_HERE" });
 
             if (!liff.isLoggedIn()) {
                 liff.login();
             } else {
                 const profile = await liff.getProfile();
+                // この行で、LINE User IDをフォームの隠しフィールドに設定します
                 document.getElementById('lineUserId').value = profile.userId;
+                // ニックネームの初期値にLINEの表示名を設定します
                 document.getElementById('nickname').value = profile.displayName;
             }
         }
@@ -108,6 +183,11 @@
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             
+            // ▼▼▼ ローディング画面を表示する処理を追加 ▼▼▼
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+            document.getElementById('form-container').style.display = 'none';
+
             const fileInput = document.getElementById('profile-image');
             const file = fileInput.files[0];
 
@@ -131,6 +211,8 @@
                 };
                 reader.onerror = function() {
                     alert('ファイルの読み込みに失敗しました。');
+                    loadingOverlay.style.display = 'none';
+                    document.getElementById('form-container').style.display = 'block';
                 };
             } else {
                 sendData(data);
@@ -138,7 +220,7 @@
         });
 
         function sendData(data) {
-            // ▼▼▼ ご提示いただいた新しいURLに更新しました ▼▼▼
+            // ▼▼▼【重要】プロフィール登録用に作成した、新しいGASのURLに必ず書き換えてください ▼▼▼
             const endpoint = 'https://script.google.com/macros/s/AKfycbyKpmAPE5sI2IEKmp998uVSr8zWO7OLfrEO50A_ZA6ZdW3zKM8ndj1PfcRDWMnBU3S9Tw/exec';
             
             fetch(endpoint, {
@@ -148,15 +230,24 @@
             })
             .then(response => response.json())
             .then(resData => {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                const formContainer = document.getElementById('form-container');
+                const submissionComplete = document.getElementById('submission-complete');
+                loadingOverlay.style.display = 'none';
+
                 if (resData.status === 'success') {
-                    document.getElementById('form-container').style.display = 'none';
-                    document.getElementById('submission-complete').style.display = 'block';
+                    submissionComplete.style.display = 'block';
                     setTimeout(() => { liff.closeWindow(); }, 3000);
                 } else {
                     alert('登録に失敗しました: ' + (resData.message || '不明なエラー'));
+                    formContainer.style.display = 'block';
                 }
             })
             .catch(error => {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                const formContainer = document.getElementById('form-container');
+                loadingOverlay.style.display = 'none';
+                formContainer.style.display = 'block';
                 alert('送信中にエラーが発生しました。');
             });
         }
