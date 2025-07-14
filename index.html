@@ -99,14 +99,13 @@
         <p>送信中...</p>
     </div>
 
-    <!-- ▼▼▼【追加】外部ブラウザで開かれた場合に表示する画面 ▼▼▼ -->
+    <!-- ▼▼▼【修正】外部ブラウザで開かれた場合の案内ページ ▼▼▼ -->
     <div class="container" id="external-browser-container" style="display: none;">
-        <h1>LINEで開いてください</h1>
-        <p class="intro-text" style="text-align: left;">
-            このサービスはLINEアプリでご利用いただけます。<br>下のボタンを押してLINEで開いてください。
+        <h1>LINEアプリを準備しています...</h1>
+        <p class="intro-text" style="text-align: center;">
+            自動的に切り替わらない場合は、<br>下のボタンを押してください。
         </p>
         <br>
-        <!-- ▼▼▼【修正】ボタンのリンク先を直接LIFF URLに設定しました ▼▼▼ -->
         <a href="https://liff.line.me/2007667389-LbQyBzQX" id="open-in-line-btn" class="add-friend-btn">LINEで開く</a>
     </div>
 
@@ -147,18 +146,17 @@
     </div>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        // ▼▼▼【重要】ロジック全体を修正しました ▼▼▼
         const liffId = "2007667389-LbQyBzQX";
 
-        // ページが読み込まれたら、まずブラウザを判定する
+        // ▼▼▼【重要】ロジック全体を修正しました ▼▼▼
         document.addEventListener('DOMContentLoaded', function() {
             // User Agentを見てLINEのブラウザかどうかを判定
-            if (/Line/i.test(navigator.userAgent)) {
-                // LINE内ブラウザの場合、LIFFの初期化を開始
-                initializeLiff();
-            } else {
+            if (!/Line/i.test(navigator.userAgent)) {
                 // 外部ブラウザの場合、案内画面を表示
                 document.getElementById('external-browser-container').style.display = 'block';
+            } else {
+                // LINE内ブラウザの場合、LIFFの初期化を開始
+                initializeLiff();
             }
         });
 
