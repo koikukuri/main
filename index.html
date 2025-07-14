@@ -19,7 +19,8 @@
         .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
         .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
         .checkbox-group input { margin-right: 10px; }
-        .submit-btn, .add-friend-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; box-sizing: border-box; text-align: center; }
+        .submit-btn, .add-friend-btn, .menu-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
+        .menu-btn.secondary { background-color: #f0f2f5; color: #333; }
         .button-group { margin-top: 20px; }
         .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
         .profile-btn { background-color: #d81b60; color: white; }
@@ -85,32 +86,17 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(-360deg); }
         }
-        /* 画面全体を覆うコンテナの基本スタイル */
         .view {
-            display: none; /* 初期状態ではすべて非表示 */
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- ▼▼▼【重要】画面の状態に応じて、表示するコンテナを切り替えます ▼▼▼ -->
-
-    <!-- 1. 初期ロード画面 -->
     <div id="loading-view" class="container view" style="display: block;">
         <h1>読み込み中...</h1>
         <p class="intro-text">アプリを準備しています。<br>少々お待ちください。</p>
     </div>
 
-    <!-- 2. 外部ブラウザで開かれた場合の案内画面 -->
-    <div id="external-browser-view" class="container view">
-        <h1>LINEで開いてください</h1>
-        <p class="intro-text" style="text-align: left;">
-            このサービスはLINEアプリでご利用いただけます。<br>下のボタンを押してLINEで開いてください。
-        </p>
-        <br>
-        <a href="#" id="open-in-line-btn" class="add-friend-btn">LINEで開く</a>
-    </div>
-
-    <!-- 3. 友だち追加を促す画面 -->
     <div id="add-friend-view" class="container view">
         <h1>はじめに</h1>
         <p class="intro-text" style="text-align: left;">
@@ -120,7 +106,14 @@
         <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
     </div>
 
-    <!-- 4. メインの申し込みフォーム画面 -->
+    <!-- ▼▼▼【追加】選択画面（メニュー）▼▼▼ -->
+    <div id="menu-view" class="container view">
+        <h1>ようこそ！</h1>
+        <p class="intro-text">どちらの操作をしますか？</p>
+        <button id="show-event-form-btn" class="menu-btn">イベントに申し込む</button>
+        <a href="https://liff.line.me/YOUR_PROFILE_LIFF_ID_HERE" class="menu-btn secondary">アンケートに回答する (プロフィール登録)</a>
+    </div>
+
     <div id="form-view" class="container view">
         <h1>Koi-Kukuri イベント申し込み</h1>
         <p class="intro-text">イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。</p>
@@ -138,7 +131,6 @@
         </form>
     </div>
 
-    <!-- 5. 送信完了画面 -->
     <div id="submission-complete-view" class="container view">
         <h2>お申し込み<br>ありがとうございます！</h2>
         <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
@@ -148,7 +140,6 @@
         </div>
     </div>
     
-    <!-- 送信中のローディング画面 -->
     <div id="sending-overlay" class="loading-container">
         <div class="spinner-wrapper">
             <div class="spinner-track"></div>
@@ -160,21 +151,18 @@
     </div>
 
     <script>
-        // ▼▼▼【重要】ロジック全体を再構築しました ▼▼▼
         document.addEventListener('DOMContentLoaded', main);
 
         async function main() {
             const liffId = "2007667389-LbQyBzQX";
-            // 画面要素への参照
             const views = {
                 loading: document.getElementById('loading-view'),
-                external: document.getElementById('external-browser-view'),
                 addFriend: document.getElementById('add-friend-view'),
+                menu: document.getElementById('menu-view'), // メニュー画面を追加
                 form: document.getElementById('form-view'),
                 complete: document.getElementById('submission-complete-view')
             };
 
-            // 現在表示中の画面を管理する関数
             const showView = (viewName) => {
                 Object.keys(views).forEach(key => {
                     views[key].style.display = 'none';
@@ -182,40 +170,41 @@
                 views[viewName].style.display = 'block';
             };
 
+            if (!liff.isInClient()) {
+                showView('loading');
+                views.loading.innerHTML = `<h1>LINEで開いてください</h1><p>このページはLINEアプリでご利用いただけます。</p><a href="https://liff.line.me/${liffId}">LINEで開く</a>`;
+                return;
+            }
+
             try {
-                // LIFFの初期化
                 await liff.init({ liffId: liffId });
 
-                // 外部ブラウザかどうかを判定
-                if (!liff.isInClient()) {
-                    showView('external');
-                    document.getElementById('open-in-line-btn').href = `https://liff.line.me/${liffId}`;
-                    return;
-                }
-
-                // ログイン状態を判定
                 if (!liff.isLoggedIn()) {
                     liff.login();
                     return;
                 }
 
-                // 友だち状態を判定
                 const friendship = await liff.getFriendship();
                 if (!friendship.friendFlag) {
                     showView('addFriend');
                     return;
                 }
                 
-                // 全てのチェックをクリアした場合、フォームを表示
-                showView('form');
+                // ▼▼▼【重要】友だちの場合、まずメニュー画面を表示します ▼▼▼
+                showView('menu');
                 const profile = await liff.getProfile();
                 document.getElementById('lineUserId').value = profile.userId;
 
             } catch (err) {
                 console.error(err);
-                showView('loading'); // エラー時は初期画面に戻す
-                views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。LINEアプリを再起動するか、時間をおいて再度お試しください。</p><p><small>エラー: ${err.message}</small></p>`;
+                showView('loading');
+                views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。</p><p><small>エラー: ${err.message}</small></p>`;
             }
+            
+            // ▼▼▼【追加】メニュー画面のボタンにイベントを設定 ▼▼▼
+            document.getElementById('show-event-form-btn').addEventListener('click', () => {
+                showView('form');
+            });
         }
 
         const form = document.getElementById('applicationForm');
