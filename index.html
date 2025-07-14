@@ -106,8 +106,8 @@
             サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。
         </p>
         <br>
-        <!-- ▼▼▼ あなたのLINE公式アカウントの「友だち追加URL」を設定してください ▼▼▼ -->
-        <a href="https://lin.ee/YOUR_LINE_ACCOUNT_ID" class="add-friend-btn">LINEで友だち追加する</a>
+        <!-- ▼▼▼【修正済み】あなたの友だち追加URLを設定しました ▼▼▼ -->
+        <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
     </div>
 
     <div class="container" id="form-container" style="display: none;">
@@ -138,22 +138,21 @@
     <script>
         async function main() {
             const liffId = "2007667389-LbQyBzQX";
-            await liff.init({ liffId: liffId });
-
-            if (!liff.isInClient()) {
-                window.location = `https://liff.line.me/${liffId}`;
-            } 
-            
-            // ▼▼▼【重要】友だちかどうかのチェックを追加しました ▼▼▼
             try {
-                const friendship = await liff.getFriendship();
-                if (!friendship.friendFlag) {
-                    // 友だちでなければ、友だち追加画面を表示
-                    document.getElementById('add-friend-container').style.display = 'block';
+                await liff.init({ liffId: liffId });
+
+                if (!liff.isInClient()) {
+                    alert("このページはLINEアプリで開いてください。");
+                    window.location = `https://liff.line.me/${liffId}`;
+                    return;
+                }
+
+                if (!liff.isLoggedIn()) {
+                    liff.login();
                 } else {
-                    // 友だちなら、フォームを表示
-                    if (!liff.isLoggedIn()) { 
-                        liff.login(); 
+                    const friendship = await liff.getFriendship();
+                    if (!friendship.friendFlag) {
+                        document.getElementById('add-friend-container').style.display = 'block';
                     } else {
                         document.getElementById('form-container').style.display = 'block';
                         const profile = await liff.getProfile();
@@ -162,9 +161,8 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert("友だち情報の取得に失敗しました。");
+                alert("LIFFアプリの初期化中にエラーが発生しました。");
             }
-            // ▲▲▲ ここまで ▲▲▲
         }
         main();
 
