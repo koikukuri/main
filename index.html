@@ -152,11 +152,9 @@
             try {
                 await liff.init({ liffId: liffId });
 
-                // ▼▼▼【重要】外部ブラウザで開かれた場合の処理を修正しました ▼▼▼
                 if (!liff.isInClient()) {
-                    // 外部ブラウザ用の案内画面を表示するだけにする
                     document.getElementById('external-browser-container').style.display = 'block';
-                    return; // これ以上処理を進めない
+                    return; 
                 }
 
                 if (!liff.isLoggedIn()) {
