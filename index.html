@@ -18,7 +18,7 @@
         .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
         .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
         .checkbox-group input { margin-right: 10px; }
-        .submit-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .submit-btn, .add-friend-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; box-sizing: border-box; text-align: center; }
         #submission-complete { text-align: center; padding: 40px 20px; display: none; }
         #submission-complete h2 { color: #d81b60; }
         .button-group { margin-top: 20px; }
@@ -99,7 +99,18 @@
         <p>送信中...</p>
     </div>
 
-    <div class="container" id="form-container">
+    <!-- ▼▼▼【追加】友だち追加を促す画面 ▼▼▼ -->
+    <div class="container" id="add-friend-container" style="display: none;">
+        <h1>はじめに</h1>
+        <p class="intro-text" style="text-align: left;">
+            サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。
+        </p>
+        <br>
+        <!-- ▼▼▼ あなたのLINE公式アカウントの「友だち追加URL」を設定してください ▼▼▼ -->
+        <a href="https://lin.ee/YOUR_LINE_ACCOUNT_ID" class="add-friend-btn">LINEで友だち追加する</a>
+    </div>
+
+    <div class="container" id="form-container" style="display: none;">
         <h1>Koi-Kukuri イベント申し込み</h1>
         <p class="intro-text">イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。</p>
         <div class="event-details"><strong>開催日時:</strong> 2025年8月3日(日) 14:00〜16:00</div>
@@ -119,18 +130,41 @@
         <h2>お申し込み<br>ありがとうございます！</h2>
         <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
         <div class="button-group">
-            <a href="https://liff.line.me/2007667389-KRwMmRwO" class="profile-btn">プロフィール登録に進む</a>
+            <a href="https://liff.line.me/YOUR_PROFILE_LIFF_ID_HERE" class="profile-btn">プロフィール登録に進む</a>
             <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
         </div>
     </div>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         async function main() {
-            await liff.init({ liffId: "2007667389-LbQyBzQX" });
-            if (!liff.isLoggedIn()) { liff.login(); } else {
-                const profile = await liff.getProfile();
-                document.getElementById('lineUserId').value = profile.userId;
+            const liffId = "2007667389-LbQyBzQX";
+            await liff.init({ liffId: liffId });
+
+            if (!liff.isInClient()) {
+                window.location = `https://liff.line.me/${liffId}`;
+            } 
+            
+            // ▼▼▼【重要】友だちかどうかのチェックを追加しました ▼▼▼
+            try {
+                const friendship = await liff.getFriendship();
+                if (!friendship.friendFlag) {
+                    // 友だちでなければ、友だち追加画面を表示
+                    document.getElementById('add-friend-container').style.display = 'block';
+                } else {
+                    // 友だちなら、フォームを表示
+                    if (!liff.isLoggedIn()) { 
+                        liff.login(); 
+                    } else {
+                        document.getElementById('form-container').style.display = 'block';
+                        const profile = await liff.getProfile();
+                        document.getElementById('lineUserId').value = profile.userId;
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert("友だち情報の取得に失敗しました。");
             }
+            // ▲▲▲ ここまで ▲▲▲
         }
         main();
 
@@ -172,7 +206,6 @@
         });
 
         function sendData(data) {
-            // ▼▼▼【重要】イベント申し込み専用のGASのURLに設定してください ▼▼▼
             const endpoint = 'https://script.google.com/macros/s/AKfycbyLGE9OBTeNjcTwnFz_Z3YLfVu-qVaWyyiPc7cwI2JAmN15NgTC_PPeqyCr3fzA63fiHw/exec';
             
             fetch(endpoint, {
