@@ -25,6 +25,55 @@
         .profile-btn { background-color: #d81b60; color: white; }
         .later-btn { background-color: #eee; color: #333; }
         
+        .event-select-btn {
+            position: relative;
+            background-color: #fff;
+            color: #333;
+            border: 2px solid #d81b60;
+            text-align: left;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .event-select-btn:hover:not(:disabled) {
+            background-color: #fdf2f8;
+            transform: translateY(-2px);
+        }
+        .event-btn-title {
+            font-size: 18px;
+            color: #d81b60;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .event-btn-details {
+            font-size: 15px;
+            color: #555;
+            font-weight: normal;
+        }
+        .status-full, .status-partial {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-full {
+            background-color: #6c757d;
+            color: white;
+        }
+        .status-partial {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .event-select-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: #ccc;
+        }
+        .event-select-btn:disabled .event-btn-title {
+            color: #6c757d;
+        }
+
         .loading-container {
             display: none;
             position: fixed;
@@ -104,7 +153,6 @@
         <p class="intro-text" style="text-align: center; margin-top: 15px;">友だち追加後、メニューの「参加申し込み」からお申込みください。</p>
     </div>
 
-    <!-- ▼▼▼【追加】イベント選択画面 ▼▼▼ -->
     <div id="event-selection-view" class="container view">
         <h1>イベントを選択</h1>
         <p class="intro-text">参加したいイベントを選んでください。</p>
@@ -132,10 +180,9 @@
 
     <div id="submission-complete-view" class="container view">
         <h2>お申し込み<br>ありがとうございます！</h2>
-        <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
+        <p>申し込み内容の詳細は、LINEのメッセージをご確認ください。<br>この画面は閉じていただいて構いません。</p>
         <div class="button-group">
-            <a href="https://liff.line.me/YOUR_PROFILE_LIFF_ID_HERE" class="profile-btn">プロフィール登録に進む</a>
-            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
+            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">ウィンドウを閉じる</a>
         </div>
     </div>
     
@@ -165,10 +212,14 @@
             };
 
             const showView = (viewName) => {
-                Object.keys(views).forEach(key => {
-                    views[key].style.display = 'none';
-                });
-                views[viewName].style.display = 'block';
+                for (const key in views) {
+                    if (Object.prototype.hasOwnProperty.call(views, key)) {
+                        views[key].style.display = 'none';
+                    }
+                }
+                if (views[viewName]) {
+                    views[viewName].style.display = 'block';
+                }
             };
 
             if (!liff.isInClient()) {
@@ -191,22 +242,39 @@
                     return;
                 }
                 
-                showView('loading'); // イベントリスト取得中はローディング表示
+                showView('loading'); 
                 const profile = await liff.getProfile();
                 document.getElementById('lineUserId').value = profile.userId;
 
-                // ▼▼▼【重要】イベント情報をGASから取得して選択肢を表示します ▼▼▼
-                fetch(endpoint) // GETリクエスト
+                fetch(endpoint) 
                     .then(response => response.json())
                     .then(resData => {
                         if (resData.status === 'success' && resData.data.length > 0) {
                             const eventListContainer = document.getElementById('event-list');
-                            eventListContainer.innerHTML = ''; // コンテナをクリア
+                            eventListContainer.innerHTML = '';
                             resData.data.forEach(event => {
                                 const button = document.createElement('button');
                                 button.className = 'event-select-btn';
-                                button.textContent = `【${event.date} ${event.time}】${event.name}`;
+                                
+                                const isMaleFull = event.maleApplicants >= event.maleCapacity;
+                                const isFemaleFull = event.femaleApplicants >= event.femaleCapacity;
+                                let statusText = '';
+                                if (isMaleFull && isFemaleFull) {
+                                    statusText = '<span class="status-full">満員御礼</span>';
+                                    button.disabled = true;
+                                } else if (isMaleFull) {
+                                    statusText = '<span class="status-partial">男性満員</span>';
+                                } else if (isFemaleFull) {
+                                    statusText = '<span class="status-partial">女性満員</span>';
+                                }
+
+                                button.innerHTML = `<span class="event-btn-title">${event.name}</span><span class="event-btn-details">${event.date} / ${event.time}</span>${statusText}`;
+                                
                                 button.onclick = () => {
+                                    if (isMaleFull && isFemaleFull) {
+                                        alert("このイベントは満員のため、お申し込みいただけません。");
+                                        return;
+                                    }
                                     document.getElementById('event-title').textContent = event.name;
                                     document.getElementById('event-details').innerHTML = `<strong>開催日時:</strong> ${event.date} ${event.time}`;
                                     document.getElementById('selectedEventName').value = event.name;
@@ -246,7 +314,7 @@
 
             const data = {
                 lineUserId: document.getElementById('lineUserId').value,
-                eventName: document.getElementById('selectedEventName').value, // 選択したイベント名を追加
+                eventName: document.getElementById('selectedEventName').value, 
                 name: document.getElementById('name').value,
                 age: document.getElementById('age').value,
                 gender: document.getElementById('gender').value,
