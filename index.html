@@ -19,7 +19,7 @@
         .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
         .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
         .checkbox-group input { margin-right: 10px; }
-        .submit-btn, .add-friend-btn, .menu-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
+        .submit-btn, .add-friend-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; box-sizing: border-box; text-align: center; }
         .button-group { margin-top: 20px; }
         .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
         .profile-btn { background-color: #d81b60; color: white; }
@@ -96,24 +96,12 @@
         <p class="intro-text">アプリを準備しています。<br>少々お待ちください。</p>
     </div>
 
-    <!-- ▼▼▼【修正】未友だちの場合に表示する画面 ▼▼▼ -->
     <div id="add-friend-view" class="container view">
         <h1>はじめに</h1>
-        <p class="intro-text" style="text-align: left;">
-            サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。
-        </p>
+        <p class="intro-text" style="text-align: left;">サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。</p>
         <br>
         <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
-        <p class="intro-text" style="text-align: center; margin-top: 15px;">
-            友だち追加後、メニューの「参加申し込み」からお申込みください。
-        </p>
-    </div>
-
-    <!-- ▼▼▼【修正】友だちの場合に表示する画面 ▼▼▼ -->
-    <div id="menu-view" class="container view">
-        <h1>ようこそ！</h1>
-        <p class="intro-text">下のボタンからイベントにお申し込みください。</p>
-        <button id="show-event-form-btn" class="menu-btn">イベントに申し込む</button>
+        <p class="intro-text" style="text-align: center; margin-top: 15px;">友だち追加後、メニューの「参加申し込み」からお申込みください。</p>
     </div>
 
     <div id="form-view" class="container view">
@@ -160,7 +148,6 @@
             const views = {
                 loading: document.getElementById('loading-view'),
                 addFriend: document.getElementById('add-friend-view'),
-                menu: document.getElementById('menu-view'),
                 form: document.getElementById('form-view'),
                 complete: document.getElementById('submission-complete-view')
             };
@@ -192,8 +179,7 @@
                     return;
                 }
                 
-                // ▼▼▼【修正】友だちの場合、メニュー画面を表示します ▼▼▼
-                showView('menu');
+                showView('form');
                 const profile = await liff.getProfile();
                 document.getElementById('lineUserId').value = profile.userId;
 
@@ -202,10 +188,6 @@
                 showView('loading');
                 views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。</p><p><small>エラー: ${err.message}</small></p>`;
             }
-            
-            document.getElementById('show-event-form-btn').addEventListener('click', () => {
-                showView('form');
-            });
         }
 
         const form = document.getElementById('applicationForm');
@@ -256,8 +238,13 @@
             .then(response => response.json())
             .then(resData => {
                 document.getElementById('sending-overlay').style.display = 'none';
+                
+                // ▼▼▼【重要】締め切り時の処理を追加しました ▼▼▼
                 if (resData.status === 'success') {
                     document.getElementById('submission-complete-view').style.display = 'block';
+                } else if (resData.status === 'full' || resData.status === 'closed') {
+                    alert(resData.message); // GASからのメッセージを表示
+                    document.getElementById('form-view').style.display = 'block';
                 } else {
                     alert('サーバーでエラーが発生しました: ' + (resData.message || '不明なエラー'));
                     document.getElementById('form-view').style.display = 'block';
