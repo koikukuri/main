@@ -155,10 +155,15 @@
             };
 
             const showView = (viewName) => {
-                Object.keys(views).forEach(key => {
-                    views[key].style.display = 'none';
-                });
-                views[key].style.display = 'block';
+                // ▼▼▼【修正箇所】forEachをfor...inループに置き換えました ▼▼▼
+                for (const key in views) {
+                    if (Object.prototype.hasOwnProperty.call(views, key)) {
+                        views[key].style.display = 'none';
+                    }
+                }
+                if (views[viewName]) {
+                    views[viewName].style.display = 'block';
+                }
             };
 
             if (!liff.isInClient()) {
