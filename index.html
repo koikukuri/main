@@ -1,261 +1,132 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koi-Kukuri イベント申し込みフォーム</title>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #d81b60; font-size: 24px; margin-bottom: 10px; }
-        .intro-text { text-align: center; font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 20px; }
-        .event-details { text-align: center; background-color: #fffde7; border: 1px dashed #fbc02d; padding: 12px; border-radius: 8px; margin-bottom: 25px; font-size: 16px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="file"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        input[type="file"] { padding: 5px; }
-        .file-note { font-size: 12px; color: #666; margin-top: 5px; }
-        .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
-        .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
-        .checkbox-group input { margin-right: 10px; }
-        .submit-btn, .add-friend-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; box-sizing: border-box; text-align: center; }
-        .button-group { margin-top: 20px; }
-        .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
-        .profile-btn { background-color: #d81b60; color: white; }
-        .later-btn { background-color: #eee; color: #333; }
-        
-        .loading-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .loading-container p {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            margin-top: 20px;
-        }
-        .spinner-wrapper {
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .spinner-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 6px solid #fdeaf1;
-            border-radius: 50%;
-            box-sizing: border-box;
-        }
-        .spinner-rotor {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            animation: rotate-rotor 2s linear infinite;
-        }
-        .loading-heart {
-            position: absolute;
-            top: -11px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 22px;
-            fill: #d81b60;
-            animation: counter-rotate-rotor 2s linear infinite;
-        }
-        @keyframes rotate-rotor {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes counter-rotate-rotor {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(-360deg); }
-        }
-        .view {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <div id="loading-view" class="container view" style="display: block;">
-        <h1>読み込み中...</h1>
-        <p class="intro-text">アプリを準備しています。<br>少々お待ちください。</p>
-    </div>
+// 【イベント申し込み専用】締め切り機能・イベント情報取得機能付き
 
-    <div id="add-friend-view" class="container view">
-        <h1>はじめに</h1>
-        <p class="intro-text" style="text-align: left;">サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。</p>
-        <br>
-        <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
-        <p class="intro-text" style="text-align: center; margin-top: 15px;">友だち追加後、メニューの「参加申し込み」からお申込みください。</p>
-    </div>
+const LINE_CHANNEL_ACCESS_TOKEN = 'ndA7uwQ0+8U5Ob6ggRITQ35b6Z4vzpmyjRQU9njqFDCsR7TIA5j7zXCH5pD/Kk63P9ixCUg3wn/SzYY9V2/VYLWXvzLO4nalpknxlipbZ+narhx8WK1Fz4s7YO1vofv7nzhGZ9z9SN6nAKd4ZJ0p3AdB04t89/1O/w1cDnyilFU=';
+const FOLDER_ID = "16-GKXIlzDUh76fqGXQu6Adubh8RFjZJ6";
+const SPREADSHEET_ID = '1U3sUHt6pXeIHT5wNqfhX0hOhbazCGq4vJUkPKkIdyM8';
 
-    <div id="form-view" class="container view">
-        <h1>Koi-Kukuri イベント申し込み</h1>
-        <p class="intro-text">イベントにご興味をお持ちいただきありがとうございます。<br>サービスの品質向上のため、テストプレイへのご協力をお願いいたします。</p>
-        <div class="event-details"><strong>開催日時:</strong> 2025年8月3日(日) 14:00〜16:00</div>
-        <form id="applicationForm">
-            <input type="hidden" id="lineUserId" name="lineUserId">
-            <div class="form-group"><label for="name">氏名</label><input type="text" id="name" name="name" required></div>
-            <div class="form-group"><label for="age">年齢</label><input type="number" id="age" name="age" min="18" required></div>
-            <div class="form-group"><label for="gender">性別</label><select id="gender" name="gender" required><option value="">選択してください</option><option value="男性">男性</option><option value="女性">女性</option><option value="その他">その他</option></select></div>
-            <div class="form-group"><label for="prefecture">都道府県</label><select id="prefecture" name="prefecture" required><option value="">選択してください</option><option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option></select></div>
-            <div class="form-group"><label for="id-upload">身分証アップロード</label><input type="file" id="id-upload" name="id-upload" accept="image/*"><p class="file-note">※テストプレイのため、提出は任意です。</p></div>
-            <div class="privacy-policy"><p><strong>プライバシーポリシー</strong></p><p>（ここにプライバシーポリシーのテキストを記載します。）</p></div>
-            <div class="checkbox-group"><input type="checkbox" id="privacy-consent" name="privacy-consent" required><label for="privacy-consent">プライバシーポリシーに同意します</label></div><br>
-            <button type="submit" class="submit-btn">申し込みを確定する</button>
-        </form>
-    </div>
+// ▼▼▼【追加】LIFFアプリ起動時にイベント情報を取得するための関数です ▼▼▼
+function doGet(e) {
+  try {
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const eventSheet = spreadsheet.getSheetByName("イベント一覧");
+    if (!eventSheet) {
+      throw new Error("「イベント一覧」シートが見つかりません。");
+    }
 
-    <div id="submission-complete-view" class="container view">
-        <h2>お申し込み<br>ありがとうございます！</h2>
-        <p>イベントへの申し込みが完了しました。<br>次に、イベントで使用するプロフィールの登録をお願いします。</p>
-        <div class="button-group">
-            <a href="https://liff.line.me/YOUR_PROFILE_LIFF_ID_HERE" class="profile-btn">プロフィール登録に進む</a>
-            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">後で登録する</a>
-        </div>
-    </div>
+    const data = eventSheet.getDataRange().getValues();
+    let eventInfo = null;
+
+    // 1行目はヘッダーなので、2行目からループ
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const isRecruiting = row[7]; // H列
+      if (isRecruiting === true || isRecruiting === '募集中') {
+        eventInfo = {
+          name: row[0], // A列: イベント名
+          date: row[1], // B列: 日
+          time: row[2], // C列: 時間
+        };
+        break; // 最初に見つかった募集中のイベントを使用
+      }
+    }
+
+    if (eventInfo) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", data: eventInfo })).setMimeType(ContentService.MimeType.JSON);
+    } else {
+      return ContentService.createTextOutput(JSON.stringify({ status: "not_found", message: "現在募集中のイベントはありません。" })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+
+// ▼▼▼ フォームから送信されたデータを処理する関数です ▼▼▼
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
     
-    <div id="sending-overlay" class="loading-container">
-        <div class="spinner-wrapper">
-            <div class="spinner-track"></div>
-            <div class="spinner-rotor">
-                <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
-            </div>
-        </div>
-        <p>送信中...</p>
-    </div>
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const eventSheet = spreadsheet.getSheetByName("イベント一覧");
+    if (!eventSheet) { throw new Error("「イベント一覧」シートが見つかりません。"); }
 
-    <script>
-        document.addEventListener('DOMContentLoaded', main);
-
-        async function main() {
-            const liffId = "2007667389-LbQyBzQX";
-            const views = {
-                loading: document.getElementById('loading-view'),
-                addFriend: document.getElementById('add-friend-view'),
-                form: document.getElementById('form-view'),
-                complete: document.getElementById('submission-complete-view')
-            };
-
-            const showView = (viewName) => {
-                Object.keys(views).forEach(key => {
-                    views[key].style.display = 'none';
-                });
-                views[viewName].style.display = 'block';
-            };
-
-            if (!liff.isInClient()) {
-                showView('loading');
-                views.loading.innerHTML = `<h1>LINEで開いてください</h1><p>このページはLINEアプリでご利用いただけます。</p><a href="https://liff.line.me/${liffId}">LINEで開く</a>`;
-                return;
-            }
-
-            try {
-                await liff.init({ liffId: liffId });
-
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
-
-                const friendship = await liff.getFriendship();
-                if (!friendship.friendFlag) {
-                    showView('addFriend');
-                    return;
-                }
-                
-                showView('form');
-                const profile = await liff.getProfile();
-                document.getElementById('lineUserId').value = profile.userId;
-
-            } catch (err) {
-                console.error(err);
-                showView('loading');
-                views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。</p><p><small>エラー: ${err.message}</small></p>`;
-            }
+    // 募集中の最初のイベントを取得
+    const eventDataRows = eventSheet.getDataRange().getValues();
+    let eventRowIndex = -1;
+    for (let i = 1; i < eventDataRows.length; i++) {
+        if (eventDataRows[i][7] === true || eventDataRows[i][7] === '募集中') {
+            eventRowIndex = i + 1; // シートの行番号 (1-based)
+            break;
         }
+    }
 
-        const form = document.getElementById('applicationForm');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const sendingOverlay = document.getElementById('sending-overlay');
-            sendingOverlay.style.display = 'flex';
-            document.getElementById('form-view').style.display = 'none';
+    if (eventRowIndex === -1) {
+        return ContentService.createTextOutput(JSON.stringify({ status: "closed", message: "このイベントは現在募集を締め切っています。" })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const eventData = eventSheet.getRange(`A${eventRowIndex}:H${eventRowIndex}`).getValues()[0];
+    const eventName         = eventData[0];
+    const eventDate         = eventData[1];
+    const eventTime         = eventData[2];
+    const maleCapacity      = eventData[3];
+    const femaleCapacity    = eventData[4];
+    let maleApplicants    = eventData[5];
+    let femaleApplicants  = eventData[6];
 
-            const fileInput = document.getElementById('id-upload');
-            const file = fileInput.files[0];
+    if (payload.gender === '男性' && maleApplicants >= maleCapacity) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "full", message: "申し訳ありません、男性の枠は満員となりました。" })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (payload.gender === '女性' && femaleApplicants >= femaleCapacity) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "full", message: "申し訳ありません、女性の枠は満員となりました。" })).setMimeType(ContentService.MimeType.JSON);
+    }
 
-            const data = {
-                lineUserId: document.getElementById('lineUserId').value,
-                name: document.getElementById('name').value,
-                age: document.getElementById('age').value,
-                gender: document.getElementById('gender').value,
-                prefecture: document.getElementById('prefecture').value,
-            };
+    if (payload.gender === '男性') {
+      eventSheet.getRange(`F${eventRowIndex}`).setValue(maleApplicants + 1);
+    } else if (payload.gender === '女性') {
+      eventSheet.getRange(`G${eventRowIndex}`).setValue(femaleApplicants + 1);
+    }
 
-            if (file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function() {
-                    data.fileData = reader.result;
-                    data.fileName = file.name;
-                    sendData(data);
-                };
-                reader.onerror = function() {
-                    alert('ファイルの読み込みに失敗しました。');
-                    sendingOverlay.style.display = 'none';
-                    document.getElementById('form-view').style.display = 'block';
-                };
-            } else {
-                sendData(data);
-            }
-        });
+    const applicationSheet = spreadsheet.getSheetByName("フォーム回答"); 
+    if (!applicationSheet) { throw new Error("「フォーム回答」という名前のシートが見つかりません。"); }
 
-        function sendData(data) {
-            const endpoint = 'https://script.google.com/macros/s/AKfycbyLGE9OBTeNjcTwnFz_Z3YLfVu-qVaWyyiPc7cwI2JAmN15NgTC_PPeqyCr3fzA63fiHw/exec';
-            
-            fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(resData => {
-                document.getElementById('sending-overlay').style.display = 'none';
-                
-                // ▼▼▼【重要】締め切り時の処理を追加しました ▼▼▼
-                if (resData.status === 'success') {
-                    document.getElementById('submission-complete-view').style.display = 'block';
-                } else if (resData.status === 'full' || resData.status === 'closed') {
-                    alert(resData.message); // GASからのメッセージを表示
-                    document.getElementById('form-view').style.display = 'block';
-                } else {
-                    alert('サーバーでエラーが発生しました: ' + (resData.message || '不明なエラー'));
-                    document.getElementById('form-view').style.display = 'block';
-                }
-            })
-            .catch(error => {
-                document.getElementById('sending-overlay').style.display = 'none';
-                document.getElementById('form-view').style.display = 'block';
-                alert('送信中にエラーが発生しました: ' + error);
-            });
-        }
-    </script>
-</body>
-</html>
+    let imageUrl = "なし";
+    let fileBlob = null;
+    if (payload.fileData) {
+      const [meta, base64] = payload.fileData.split(',');
+      const mimeType = meta.split(';')[0].split(':')[1];
+      const decodedData = Utilities.base64Decode(base64);
+      fileBlob = Utilities.newBlob(decodedData, mimeType, payload.fileName);
+    }
+    if (fileBlob) {
+      const folder = DriveApp.getFolderById(FOLDER_ID);
+      const fileName = new Date().getTime() + "_" + payload.fileName;
+      const file = folder.createFile(fileBlob.setName(fileName));
+      imageUrl = file.getUrl();
+    }
+
+    applicationSheet.appendRow([
+      new Date(), payload.lineUserId, payload.name, payload.age, payload.gender, payload.prefecture, imageUrl, eventName
+    ]);
+
+    const recipient = "kawai@coconazo.com";
+    const subject = `【${eventName}】新規申し込みがありました`;
+    const mailHtmlBody = `<h2>新規申し込みがありました</h2><p><strong>イベント名:</strong> ${eventName}</p><p><strong>氏名:</strong> ${payload.name || ''}</p><p><strong>LINE User ID:</strong> ${payload.lineUserId || ''}</p><p><strong>身分証URL:</strong> <a href="${imageUrl}">${imageUrl}</a></p>`;
+    const mailOptions = { htmlBody: mailHtmlBody };
+    if (fileBlob) { 
+      mailOptions.attachments = [fileBlob]; 
+    }
+    MailApp.sendEmail(recipient, subject, "", mailOptions);
+
+    const linePushUrl = "https://api.line.me/v2/bot/message/push";
+    const lineMessage = `お申し込みを受け付けました。\n\n【開催日時】\n${eventDate} ${eventTime}\n\nご参加お待ちしております！`;
+    const linePayload = { to: payload.lineUserId, messages: [{ type: "text", text: lineMessage }] };
+    const lineOptions = { method: "post", headers: { "Content-Type": "application/json", Authorization: "Bearer " + LINE_CHANNEL_ACCESS_TOKEN }, payload: JSON.stringify(linePayload), muteHttpExceptions: true };
+    UrlFetchApp.fetch(linePushUrl, lineOptions);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    Logger.log("エラー: " + err.message);
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
