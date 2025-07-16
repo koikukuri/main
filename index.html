@@ -1,346 +1,131 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>じゃんけん謎</title>
-    <!-- LIFF SDK -->
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- Google Fonts (ドット絵フォント) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'DotGothic16', sans-serif;
-            background-color: #334155;
-            image-rendering: pixelated;
-            /* ★★★ 修正点：ズームと選択を禁止 ★★★ */
-            touch-action: manipulation; /* ダブルタップズームを無効化 */
-            -webkit-user-select: none;  /* Safari/Chrome */
-            -moz-user-select: none;     /* Firefox */
-            -ms-user-select: none;      /* IE/Edge */
-            user-select: none;          /* 標準 */
-        }
-        .pixel-container {
-            background-color: #F1F5F9;
-            border: 4px solid #1E293B;
-            box-shadow: 8px 8px 0px #1E293B;
-        }
-        .pixel-btn {
-            background-color: #64748B;
-            color: white;
-            border: 4px solid #1E293B;
-            box-shadow: 2px 2px 0px #1E293B;
-            transition: all 0.1s;
-            user-select: none;
-        }
-        .pixel-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: none;
-        }
-        .arrow-btn {
-            padding: 4px;
-            font-size: 1.2rem;
-        }
-        .pixel-display {
-            background-color: #CBD5E1;
-            border: 4px solid #475569;
-            height: 80px;
-            width: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            line-height: 1;
-        }
-        .hand-icon {
-            font-size: 2.5rem; 
-        }
-        #success-message {
-             background-color: rgba(30, 41, 59, 0.9);
-             border: 4px solid #F1F5F9;
-        }
-        .close-btn {
-            background-color: #ef4444;
-        }
-        #fireworks-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        /* ローディング画面 */
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #334155;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 1rem;
-            white-space: pre-wrap;
-        }
-    </style>
-</head>
-<body class="flex items-center justify-center h-screen overflow-hidden p-4">
+/**
+ * LINE Developersコンソールで取得した、あなたのチャネルのアクセストークンを設定してください。
+ * スクリプトプロパティに設定することを強く推奨します。
+ */
+const CHANNEL_ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty('CHANNEL_ACCESS_TOKEN');
 
-    <div id="loading">よみこみちゅう...</div>
+/**
+ * 参加者の情報が記載されているスプレッドシートのシート名
+ */
+const USER_SHEET_NAME = '参加中';
 
-    <!-- 花火エフェクト用のキャンバス -->
-    <canvas id="fireworks-canvas"></canvas>
+/**
+ * デバッグログを記録するシート名
+ */
+const LOG_SHEET_NAME = 'デバッグログ';
 
-    <div id="main-content" class="relative w-full max-w-sm" style="display: none;">
-        <div id="game-container" class="pixel-container p-6">
-            
-            <!-- スピナー -->
-            <div class="flex justify-around items-end">
-                <!-- スピナー 1 -->
-                <div class="spinner-widget text-center">
-                    <div class="hand-icon h-10 mb-2 flex items-center justify-center"></div>
-                    <button class="spinner-btn up-btn pixel-btn arrow-btn w-full">▲</button>
-                    <div class="pixel-display my-1"></div>
-                    <button class="spinner-btn down-btn pixel-btn arrow-btn w-full">▼</button>
-                </div>
-                <!-- スピナー 2 -->
-                <div class="spinner-widget text-center">
-                    <div class="hand-icon h-10 mb-2 flex items-center justify-center"></div>
-                    <button class="spinner-btn up-btn pixel-btn arrow-btn w-full">▲</button>
-                    <div class="pixel-display my-1"></div>
-                    <button class="spinner-btn down-btn pixel-btn arrow-btn w-full">▼</button>
-                </div>
-                <!-- スピナー 3 -->
-                <div class="spinner-widget text-center">
-                    <div class="hand-icon h-10 mb-2 flex items-center justify-center"></div>
-                    <button class="spinner-btn up-btn pixel-btn arrow-btn w-full">▲</button>
-                    <div class="pixel-display my-1"></div>
-                    <button class="spinner-btn down-btn pixel-btn arrow-btn w-full">▼</button>
-                </div>
-            </div>
-            
-            <!-- 判定ボタン -->
-            <div class="mt-8 text-center">
-                <button id="check-btn" class="pixel-btn bg-sky-500 py-3 px-10 text-xl">
-                    けってい
-                </button>
-            </div>
-        </div>
+/**
+ * ログをスプレッドシートに書き込む関数
+ * @param {string} message - 記録するメッセージ
+ */
+function logToSheet(message) {
+  try {
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    let logSheet = spreadsheet.getSheetByName(LOG_SHEET_NAME);
+    
+    if (!logSheet) {
+      logSheet = spreadsheet.insertSheet(LOG_SHEET_NAME);
+      logSheet.appendRow(['タイムスタンプ', 'ログメッセージ']);
+    }
+    
+    const timestamp = new Date();
+    logSheet.appendRow([timestamp, message]);
+  } catch (e) {
+    console.error("スプレッドシートへのログ書き込みに失敗しました:", e);
+  }
+}
 
-        <!-- 正解メッセージ -->
-        <div id="success-message" class="hidden absolute inset-0 text-white p-6 flex flex-col items-center justify-center text-center">
-            <h2 class="text-4xl mb-4">クリア!</h2>
-            <p id="result-message" class="text-lg mb-6"></p>
-            <button id="close-btn" class="pixel-btn close-btn py-3 px-10 text-xl hidden">
-                とじる
-            </button>
-        </div>
+/**
+ * LIFFアプリからPOSTリクエストを受け取ったときに実行される関数
+ */
+function doPost(e) {
+  logToSheet("doPost関数が開始されました。");
+  try {
+    const data = JSON.parse(e.postData.contents);
+    // ★★★ LIFFアプリから送られてくるのは 'userId' です ★★★
+    const userId = data.userId; 
 
-        <!-- メッセージ表示エリア -->
-        <div id="message-area" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white font-bold py-3 px-5 border-4 border-slate-900">
-        </div>
-    </div>
+    if (!userId) {
+      logToSheet("エラー: LIFFアプリからユーザーIDが送られてきませんでした。");
+      throw new Error("ユーザーIDがありません。");
+    }
+    logToSheet(`クリアしたユーザーのID: 「${userId}」`);
 
-    <script>
-        // --- LIFF & GAS 設定 ---
-        const LIFF_ID = "2007667389-zrkMpOk3"; 
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJvYXNwqZhNv8SujSl1J_O4nOCEUOMAWdXNjPWaFFG1obYgLWADuDBQwhECqwWo2QBnw/exec";
+    // --- ★★★ スプレッドシートから名前を検索する機能 ★★★ ---
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(USER_SHEET_NAME);
+    if (!sheet) {
+      logToSheet(`エラー: シート「${USER_SHEET_NAME}」が見つかりません。`);
+      throw new Error(`シート「${USER_SHEET_NAME}」が見つかりません。`);
+    }
+    logToSheet(`シート「${USER_SHEET_NAME}」を正常に取得しました。`);
 
-        // --- ゲーム設定 ---
-        const emojis = ['🚥', '🧋', '🍜', '🚗', '🦒', '🐷', '🦴', '🎆', '🥝', '🐷'];
-        const correctAnswer = ['🚥', '🍜', '🐷'];
-        const handEmojis = ['✊', '✌️', '✋'];
+    const allData = sheet.getDataRange().getValues();
+    let userName = null;
+    // B列(インデックス1)でユーザーIDを検索し、一致した行のD列(インデックス3)の名前を取得します
+    for (let i = 1; i < allData.length; i++) { // 1行目はヘッダーなのでi=1から
+      if (allData[i][1] === userId) { // B列のIDが一致したら
+        userName = allData[i][3]; // D列の名前を取得
+        break;
+      }
+    }
 
-        // --- 要素の取得 ---
-        const loadingScreen = document.getElementById('loading');
-        const mainContent = document.getElementById('main-content');
-        let isSolved = false;
+    if (!userName) {
+        logToSheet(`エラー: シート内でユーザーID「${userId}」に対応する名前が見つかりませんでした。`);
+        // 名前が見つからない場合は、LINEのプロフィール名を使うなどの代替案も考えられます
+        userName = "名前不明の参加者"; 
+    }
+    logToSheet(`シートから名前「${userName}」を取得しました。`);
+    // --- ここまで ---
 
-        // --- ゲームの初期化処理をまとめた関数 ---
-        function initializeGame() {
-            const spinnerWidgets = document.querySelectorAll('.spinner-widget');
-            const checkButton = document.getElementById('check-btn');
-            const successMessage = document.getElementById('success-message');
-            const resultMessage = document.getElementById('result-message');
-            const closeButton = document.getElementById('close-btn');
-            const messageArea = document.getElementById('message-area');
-            const canvas = document.getElementById('fireworks-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
+    const messageText = `【クリア速報🎉】\n${userName}さんがじゃんけんの謎を解きました！`;
+    logToSheet(`作成したメッセージ: ${messageText}`);
+    
+    const userIdsToSend = allData.slice(1) // ヘッダーを除外
+                                 .map(row => row[1]) // B列のIDのみを抽出
+                                 .filter(String); // 空のセルを除外
+    
+    logToSheet(`取得した送信先ユーザーIDの数: ${userIdsToSend.length}件`);
+    logToSheet(`取得した送信先ユーザーIDリスト: ${JSON.stringify(userIdsToSend)}`);
 
-            // スピナーのロジック
-            spinnerWidgets.forEach((widget, index) => {
-                let currentIndex = 1;
-                const displayDiv = widget.querySelector('.pixel-display');
-                const handIconDiv = widget.querySelector('.hand-icon');
-                handIconDiv.textContent = handEmojis[index];
+    if (userIdsToSend.length === 0) {
+      logToSheet("送信先のユーザーIDが0件でした。処理を中断します。");
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'No users to notify.' }));
+    }
 
-                const updateDisplay = () => {
-                    if (isSolved) return;
-                    displayDiv.textContent = emojis[currentIndex];
-                };
+    sendPushMessage(userIdsToSend, messageText);
+    logToSheet("sendPushMessage関数を呼び出し、処理は正常に終了しました。");
 
-                widget.querySelector('.up-btn').addEventListener('click', () => {
-                    if (isSolved) return;
-                    currentIndex = (currentIndex - 1 + emojis.length) % emojis.length;
-                    updateDisplay();
-                });
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }));
 
-                widget.querySelector('.down-btn').addEventListener('click', () => {
-                    if (isSolved) return;
-                    currentIndex = (currentIndex + 1) % emojis.length;
-                    updateDisplay();
-                });
+  } catch (error) {
+    logToSheet(`doPost関数全体でエラーが発生しました: ${error.toString()}`);
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }));
+  }
+}
 
-                updateDisplay();
-            });
+/**
+ * 指定されたユーザーIDリストにプッシュメッセージを送信する
+ */
+function sendPushMessage(userIds, text) {
+  const url = 'https://api.line.me/v2/bot/message/multicast';
+  const payload = { to: userIds, messages: [{ type: 'text', text: text }] };
+  const options = {
+    'method': 'post',
+    'contentType': 'application/json',
+    'headers': { 'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+    'payload': JSON.stringify(payload),
+    'muteHttpExceptions': true
+  };
+  
+  logToSheet(`LINE APIに送信する直前のデータ: ${JSON.stringify(payload)}`);
+  const response = UrlFetchApp.fetch(url, options);
+  const responseCode = response.getResponseCode();
+  const responseBody = response.getContentText();
+  
+  logToSheet(`LINE APIからの応答コード: ${responseCode}`);
+  logToSheet(`LINE APIからの応答内容: ${responseBody}`);
 
-            // 判定ボタンのイベント
-            checkButton.addEventListener('click', async () => {
-                if (isSolved) return;
-                const currentCombination = Array.from(document.querySelectorAll('.pixel-display')).map(div => div.textContent);
-                const isCorrect = JSON.stringify(currentCombination) === JSON.stringify(correctAnswer);
-
-                if (isCorrect) {
-                    isSolved = true;
-                    successMessage.classList.remove('hidden');
-                    successMessage.classList.add('fade-in');
-                    launchFireworks();
-                    resultMessage.textContent = "通知を送信しています...";
-
-                    try {
-                        const profile = await liff.getProfile();
-                        const userId = profile.userId;
-                        await fetch(GAS_WEB_APP_URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: JSON.stringify({ userId: userId }),
-                            mode: 'no-cors'
-                        });
-                        resultMessage.textContent = "みんなに通知しました！";
-                        closeButton.classList.remove('hidden');
-                    } catch (error) {
-                        console.error('送信に失敗しました:', error);
-                        resultMessage.textContent = "通知の送信に失敗しました";
-                        closeButton.classList.remove('hidden');
-                    }
-                } else {
-                    showMessage('ちがうみたい…');
-                }
-            });
-
-            // 閉じるボタン
-            closeButton.addEventListener('click', () => {
-                liff.closeWindow();
-            });
-            
-            // メッセージ表示
-            function showMessage(text) {
-                messageArea.textContent = text;
-                messageArea.classList.remove('hidden');
-                setTimeout(() => {
-                    messageArea.classList.add('hidden');
-                }, 1200);
-            }
-
-            // 花火エフェクト
-            function setupCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-
-            class Particle {
-                constructor(x, y, color, velocity) {
-                    this.x = x; this.y = y; this.color = color; this.velocity = velocity;
-                    this.alpha = 1; this.friction = 0.98; this.gravity = 0.05;
-                    this.size = Math.floor(Math.random() * 4 + 4);
-                }
-                draw() {
-                    ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
-                    ctx.fillRect(this.x, this.y, this.size, this.size); ctx.restore();
-                }
-                update() {
-                    this.velocity.x *= this.friction; this.velocity.y *= this.friction;
-                    this.velocity.y += this.gravity; this.x += this.velocity.x; this.y += this.velocity.y;
-                    this.alpha -= 0.03; this.draw();
-                }
-            }
-            
-            const fireworkColors = ['#F59E0B', '#FDE047', '#A3E635', '#4ADE80', '#67E8F9', '#A78BFA'];
-
-            function launchFireworks() {
-                 for (let i = 0; i < 5; i++) {
-                    setTimeout(() => {
-                         const x = Math.random() * canvas.width; const y = Math.random() * canvas.height;
-                         const color = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
-                         const particleCount = 100;
-                         for (let j = 0; j < particleCount; j++) {
-                            const angle = Math.random() * Math.PI * 2;
-                            const speed = Math.random() * 8;
-                            particles.push(new Particle(x, y, color, { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed }));
-                         }
-                    }, i * 200);
-                }
-            }
-
-            function animate() {
-                requestAnimationFrame(animate);
-                ctx.fillStyle = 'rgba(51, 65, 85, 0.2)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                if (isSolved && Math.random() < 0.1) launchFireworks();
-                particles.forEach((particle, index) => {
-                    if (particle.alpha > 0) particle.update();
-                    else particles.splice(index, 1);
-                });
-            }
-
-            // 花火の初期化とアニメーション開始
-            setupCanvas();
-            animate();
-            window.addEventListener('resize', setupCanvas);
-        }
-
-        // --- LIFF初期化 ---
-        async function main() {
-            loadingScreen.textContent = "LIFFの準備をしています...";
-            try {
-                await liff.init({ liffId: LIFF_ID });
-                
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    loadingScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    
-                    initializeGame();
-                }
-            } catch (err) {
-                 console.error(err);
-                 loadingScreen.textContent = `LIFFの初期化に失敗しました。\n\nエラー内容:\n${JSON.stringify(err)}`;
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', main);
-    </script>
-</body>
-</html>
+  if (responseCode < 200 || responseCode >= 300) {
+    throw new Error(`Failed to send messages. Response: ${responseBody}`);
+  }
+}
