@@ -42,7 +42,7 @@ function doPost(e) {
   logToSheet("doPost関数が開始されました。");
   try {
     const data = JSON.parse(e.postData.contents);
-    // ★★★ LIFFアプリから送られてくるのは 'userId' です ★★★
+    // LIFFアプリから送られてくるのは 'userId' です
     const userId = data.userId; 
 
     if (!userId) {
@@ -51,7 +51,7 @@ function doPost(e) {
     }
     logToSheet(`クリアしたユーザーのID: 「${userId}」`);
 
-    // --- ★★★ スプレッドシートから名前を検索する機能 ★★★ ---
+    // --- スプレッドシートから名前を検索する機能 ---
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(USER_SHEET_NAME);
     if (!sheet) {
       logToSheet(`エラー: シート「${USER_SHEET_NAME}」が見つかりません。`);
@@ -71,7 +71,7 @@ function doPost(e) {
 
     if (!userName) {
         logToSheet(`エラー: シート内でユーザーID「${userId}」に対応する名前が見つかりませんでした。`);
-        // 名前が見つからない場合は、LINEのプロフィール名を使うなどの代替案も考えられます
+        // 名前が見つからない場合は、デフォルトの名前にするなどの対応も可能
         userName = "名前不明の参加者"; 
     }
     logToSheet(`シートから名前「${userName}」を取得しました。`);
@@ -80,6 +80,7 @@ function doPost(e) {
     const messageText = `【クリア速報🎉】\n${userName}さんがじゃんけんの謎を解きました！`;
     logToSheet(`作成したメッセージ: ${messageText}`);
     
+    // 送信先として、B列の全てのユーザーIDを取得
     const userIdsToSend = allData.slice(1) // ヘッダーを除外
                                  .map(row => row[1]) // B列のIDのみを抽出
                                  .filter(String); // 空のセルを除外
