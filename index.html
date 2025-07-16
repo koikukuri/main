@@ -2,371 +2,345 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koi-Kukuri イベント申し込み</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>じゃんけん謎</title>
+    <!-- LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <!-- Google Fonts (ドット絵フォント) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #d81b60; font-size: 24px; margin-bottom: 10px; }
-        .intro-text { text-align: center; font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 20px; }
-        .event-details { text-align: center; background-color: #fffde7; border: 1px dashed #fbc02d; padding: 12px; border-radius: 8px; margin-bottom: 25px; font-size: 16px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="file"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        input[type="file"] { padding: 5px; }
-        .file-note { font-size: 12px; color: #666; margin-top: 5px; }
-        .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
-        .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
-        .checkbox-group input { margin-right: 10px; }
-        .submit-btn, .add-friend-btn, .event-select-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: block; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
-        .button-group { margin-top: 20px; }
-        .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
-        .profile-btn { background-color: #d81b60; color: white; }
-        .later-btn { background-color: #eee; color: #333; }
-        
-        .event-select-btn {
-            position: relative;
-            background-color: #fff;
-            color: #333;
-            border: 2px solid #d81b60;
-            text-align: left;
-            transition: background-color 0.2s, transform 0.2s;
+        body {
+            font-family: 'DotGothic16', sans-serif;
+            background-color: #334155;
+            image-rendering: pixelated;
+            /* ★★★ 修正点：ズームと選択を禁止 ★★★ */
+            touch-action: manipulation; /* ダブルタップズームを無効化 */
+            -webkit-user-select: none;  /* Safari/Chrome */
+            -moz-user-select: none;     /* Firefox */
+            -ms-user-select: none;      /* IE/Edge */
+            user-select: none;          /* 標準 */
         }
-        .event-select-btn:hover:not(:disabled) {
-            background-color: #fdf2f8;
-            transform: translateY(-2px);
+        .pixel-container {
+            background-color: #F1F5F9;
+            border: 4px solid #1E293B;
+            box-shadow: 8px 8px 0px #1E293B;
         }
-        .event-btn-title {
-            font-size: 18px;
-            color: #d81b60;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .event-btn-details {
-            font-size: 15px;
-            color: #555;
-            font-weight: normal;
-        }
-        .status-full, .status-partial {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .status-full {
-            background-color: #6c757d;
+        .pixel-btn {
+            background-color: #64748B;
             color: white;
+            border: 4px solid #1E293B;
+            box-shadow: 2px 2px 0px #1E293B;
+            transition: all 0.1s;
+            user-select: none;
         }
-        .status-partial {
-            background-color: #ffc107;
-            color: #333;
+        .pixel-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
         }
-        .event-select-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            border-color: #ccc;
+        .arrow-btn {
+            padding: 4px;
+            font-size: 1.2rem;
         }
-        .event-select-btn:disabled .event-btn-title {
-            color: #6c757d;
+        .pixel-display {
+            background-color: #CBD5E1;
+            border: 4px solid #475569;
+            height: 80px;
+            width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            line-height: 1;
         }
-
-        .loading-container {
-            display: none;
+        .hand-icon {
+            font-size: 2.5rem; 
+        }
+        #success-message {
+             background-color: rgba(30, 41, 59, 0.9);
+             border: 4px solid #F1F5F9;
+        }
+        .close-btn {
+            background-color: #ef4444;
+        }
+        #fireworks-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        /* ローディング画面 */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #334155;
             z-index: 9999;
-            justify-content: center;
+            display: flex;
             align-items: center;
-            flex-direction: column;
-        }
-        .loading-container p {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            margin-top: 20px;
-        }
-        .spinner-wrapper {
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .spinner-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 6px solid #fdeaf1;
-            border-radius: 50%;
-            box-sizing: border-box;
-        }
-        .spinner-rotor {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            animation: rotate-rotor 2s linear infinite;
-        }
-        .loading-heart {
-            position: absolute;
-            top: -11px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 22px;
-            fill: #d81b60;
-            animation: counter-rotate-rotor 2s linear infinite;
-        }
-        @keyframes rotate-rotor {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes counter-rotate-rotor {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(-360deg); }
-        }
-        .view {
-            display: none;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 1rem;
+            white-space: pre-wrap;
         }
     </style>
 </head>
-<body>
-    <div id="loading-view" class="container view" style="display: block;">
-        <h1>読み込み中...</h1>
-        <p class="intro-text">アプリを準備しています。<br>少々お待ちください。</p>
-    </div>
+<body class="flex items-center justify-center h-screen overflow-hidden p-4">
 
-    <div id="add-friend-view" class="container view">
-        <h1>はじめに</h1>
-        <p class="intro-text" style="text-align: left;">サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。</p>
-        <br>
-        <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
-        <p class="intro-text" style="text-align: center; margin-top: 15px;">友だち追加後、メニューの「参加申し込み」からお申込みください。</p>
-    </div>
+    <div id="loading">よみこみちゅう...</div>
 
-    <div id="event-selection-view" class="container view">
-        <h1>イベントを選択</h1>
-        <p class="intro-text">参加したいイベントを選んでください。</p>
-        <div id="event-list">
-            <!-- ここに募集中のイベントがボタンとして自動で追加されます -->
-        </div>
-    </div>
+    <!-- 花火エフェクト用のキャンバス -->
+    <canvas id="fireworks-canvas"></canvas>
 
-    <div id="form-view" class="container view">
-        <h1 id="event-title">イベント申し込み</h1>
-        <div class="event-details" id="event-details"></div>
-        <form id="applicationForm">
-            <input type="hidden" id="lineUserId" name="lineUserId">
-            <input type="hidden" id="selectedEventName" name="eventName">
-            <div class="form-group"><label for="name">氏名</label><input type="text" id="name" name="name" required></div>
-            <div class="form-group"><label for="age">年齢</label><input type="number" id="age" name="age" min="18" required></div>
-            <div class="form-group"><label for="gender">性別</label><select id="gender" name="gender" required><option value="">選択してください</option><option value="男性">男性</option><option value="女性">女性</option><option value="その他">その他</option></select></div>
-            <div class="form-group"><label for="prefecture">都道府県</label><select id="prefecture" name="prefecture" required><option value="">選択してください</option><option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option></select></div>
-            <div class="form-group"><label for="id-upload">身分証アップロード</label><input type="file" id="id-upload" name="id-upload" accept="image/*"><p class="file-note">※テストプレイのため、提出は任意です。</p></div>
-            <div class="privacy-policy"><p><strong>プライバシーポリシー</strong></p><p>（ここにプライバシーポリシーのテキストを記載します。）</p></div>
-            <div class="checkbox-group"><input type="checkbox" id="privacy-consent" name="privacy-consent" required><label for="privacy-consent">プライバシーポリシーに同意します</label></div><br>
-            <button type="submit" class="submit-btn">申し込みを確定する</button>
-        </form>
-    </div>
-
-    <div id="submission-complete-view" class="container view">
-        <h2>お申し込み<br>ありがとうございます！</h2>
-        <p>申し込み内容の詳細は、LINEのメッセージをご確認ください。<br>この画面は閉じていただいて構いません。</p>
-        <div class="button-group">
-            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">ウィンドウを閉じる</a>
-        </div>
-    </div>
-    
-    <div id="sending-overlay" class="loading-container">
-        <div class="spinner-wrapper">
-            <div class="spinner-track"></div>
-            <div class="spinner-rotor">
-                <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+    <div id="main-content" class="relative w-full max-w-sm" style="display: none;">
+        <div id="game-container" class="pixel-container p-6">
+            
+            <!-- スピナー -->
+            <div class="flex justify-around items-end">
+                <!-- スピナー 1 -->
+                <div class="spinner-widget text-center">
+                    <div class="hand-icon h-10 mb-2 flex items-center justify-center"></div>
+                    <button class="spinner-btn up-btn pixel-btn arrow-btn w-full">▲</button>
+                    <div class="pixel-display my-1"></div>
+                    <button class="spinner-btn down-btn pixel-btn arrow-btn w-full">▼</button>
+                </div>
+                <!-- スピナー 2 -->
+                <div class="spinner-widget text-center">
+                    <div class="hand-icon h-10 mb-2 flex items-center justify-center"></div>
+                    <button class="spinner-btn up-btn pixel-btn arrow-btn w-full">▲</button>
+                    <div class="pixel-display my-1"></div>
+                    <button class="spinner-btn down-btn pixel-btn arrow-btn w-full">▼</button>
+                </div>
+                <!-- スピナー 3 -->
+                <div class="spinner-widget text-center">
+                    <div class="hand-icon h-10 mb-2 flex items-center justify-center"></div>
+                    <button class="spinner-btn up-btn pixel-btn arrow-btn w-full">▲</button>
+                    <div class="pixel-display my-1"></div>
+                    <button class="spinner-btn down-btn pixel-btn arrow-btn w-full">▼</button>
+                </div>
+            </div>
+            
+            <!-- 判定ボタン -->
+            <div class="mt-8 text-center">
+                <button id="check-btn" class="pixel-btn bg-sky-500 py-3 px-10 text-xl">
+                    けってい
+                </button>
             </div>
         </div>
-        <p>送信中...</p>
+
+        <!-- 正解メッセージ -->
+        <div id="success-message" class="hidden absolute inset-0 text-white p-6 flex flex-col items-center justify-center text-center">
+            <h2 class="text-4xl mb-4">クリア!</h2>
+            <p id="result-message" class="text-lg mb-6"></p>
+            <button id="close-btn" class="pixel-btn close-btn py-3 px-10 text-xl hidden">
+                とじる
+            </button>
+        </div>
+
+        <!-- メッセージ表示エリア -->
+        <div id="message-area" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white font-bold py-3 px-5 border-4 border-slate-900">
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', main);
+        // --- LIFF & GAS 設定 ---
+        const LIFF_ID = "2007667389-zrkMpOk3"; 
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJvYXNwqZhNv8SujSl1J_O4nOCEUOMAWdXNjPWaFFG1obYgLWADuDBQwhECqwWo2QBnw/exec";
 
-        async function main() {
-            const liffId = "2007667389-LbQyBzQX";
-            const endpoint = 'https://script.google.com/macros/s/AKfycbyLGE9OBTeNjcTwnFz_Z3YLfVu-qVaWyyiPc7cwI2JAmN15NgTC_PPeqyCr3fzA63fiHw/exec';
+        // --- ゲーム設定 ---
+        const emojis = ['🚥', '🧋', '🍜', '🚗', '🦒', '🐷', '🦴', '🎆', '🥝', '🐷'];
+        const correctAnswer = ['🚥', '🍜', '🐷'];
+        const handEmojis = ['✊', '✌️', '✋'];
 
-            const views = {
-                loading: document.getElementById('loading-view'),
-                addFriend: document.getElementById('add-friend-view'),
-                eventSelection: document.getElementById('event-selection-view'),
-                form: document.getElementById('form-view'),
-                complete: document.getElementById('submission-complete-view')
-            };
+        // --- 要素の取得 ---
+        const loadingScreen = document.getElementById('loading');
+        const mainContent = document.getElementById('main-content');
+        let isSolved = false;
 
-            const showView = (viewName) => {
-                for (const key in views) {
-                    if (Object.prototype.hasOwnProperty.call(views, key)) {
-                        views[key].style.display = 'none';
+        // --- ゲームの初期化処理をまとめた関数 ---
+        function initializeGame() {
+            const spinnerWidgets = document.querySelectorAll('.spinner-widget');
+            const checkButton = document.getElementById('check-btn');
+            const successMessage = document.getElementById('success-message');
+            const resultMessage = document.getElementById('result-message');
+            const closeButton = document.getElementById('close-btn');
+            const messageArea = document.getElementById('message-area');
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            // スピナーのロジック
+            spinnerWidgets.forEach((widget, index) => {
+                let currentIndex = 1;
+                const displayDiv = widget.querySelector('.pixel-display');
+                const handIconDiv = widget.querySelector('.hand-icon');
+                handIconDiv.textContent = handEmojis[index];
+
+                const updateDisplay = () => {
+                    if (isSolved) return;
+                    displayDiv.textContent = emojis[currentIndex];
+                };
+
+                widget.querySelector('.up-btn').addEventListener('click', () => {
+                    if (isSolved) return;
+                    currentIndex = (currentIndex - 1 + emojis.length) % emojis.length;
+                    updateDisplay();
+                });
+
+                widget.querySelector('.down-btn').addEventListener('click', () => {
+                    if (isSolved) return;
+                    currentIndex = (currentIndex + 1) % emojis.length;
+                    updateDisplay();
+                });
+
+                updateDisplay();
+            });
+
+            // 判定ボタンのイベント
+            checkButton.addEventListener('click', async () => {
+                if (isSolved) return;
+                const currentCombination = Array.from(document.querySelectorAll('.pixel-display')).map(div => div.textContent);
+                const isCorrect = JSON.stringify(currentCombination) === JSON.stringify(correctAnswer);
+
+                if (isCorrect) {
+                    isSolved = true;
+                    successMessage.classList.remove('hidden');
+                    successMessage.classList.add('fade-in');
+                    launchFireworks();
+                    resultMessage.textContent = "通知を送信しています...";
+
+                    try {
+                        const profile = await liff.getProfile();
+                        const userId = profile.userId;
+                        await fetch(GAS_WEB_APP_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: JSON.stringify({ userId: userId }),
+                            mode: 'no-cors'
+                        });
+                        resultMessage.textContent = "みんなに通知しました！";
+                        closeButton.classList.remove('hidden');
+                    } catch (error) {
+                        console.error('送信に失敗しました:', error);
+                        resultMessage.textContent = "通知の送信に失敗しました";
+                        closeButton.classList.remove('hidden');
                     }
+                } else {
+                    showMessage('ちがうみたい…');
                 }
-                if (views[viewName]) {
-                    views[viewName].style.display = 'block';
-                }
-            };
+            });
 
-            if (!liff.isInClient()) {
-                showView('loading');
-                views.loading.innerHTML = `<h1>LINEで開いてください</h1><p>このページはLINEアプリでご利用いただけます。</p><a href="https://liff.line.me/${liffId}">LINEで開く</a>`;
-                return;
+            // 閉じるボタン
+            closeButton.addEventListener('click', () => {
+                liff.closeWindow();
+            });
+            
+            // メッセージ表示
+            function showMessage(text) {
+                messageArea.textContent = text;
+                messageArea.classList.remove('hidden');
+                setTimeout(() => {
+                    messageArea.classList.add('hidden');
+                }, 1200);
             }
 
-            try {
-                await liff.init({ liffId: liffId });
+            // 花火エフェクト
+            function setupCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
 
+            class Particle {
+                constructor(x, y, color, velocity) {
+                    this.x = x; this.y = y; this.color = color; this.velocity = velocity;
+                    this.alpha = 1; this.friction = 0.98; this.gravity = 0.05;
+                    this.size = Math.floor(Math.random() * 4 + 4);
+                }
+                draw() {
+                    ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, this.size, this.size); ctx.restore();
+                }
+                update() {
+                    this.velocity.x *= this.friction; this.velocity.y *= this.friction;
+                    this.velocity.y += this.gravity; this.x += this.velocity.x; this.y += this.velocity.y;
+                    this.alpha -= 0.03; this.draw();
+                }
+            }
+            
+            const fireworkColors = ['#F59E0B', '#FDE047', '#A3E635', '#4ADE80', '#67E8F9', '#A78BFA'];
+
+            function launchFireworks() {
+                 for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                         const x = Math.random() * canvas.width; const y = Math.random() * canvas.height;
+                         const color = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
+                         const particleCount = 100;
+                         for (let j = 0; j < particleCount; j++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const speed = Math.random() * 8;
+                            particles.push(new Particle(x, y, color, { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed }));
+                         }
+                    }, i * 200);
+                }
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.fillStyle = 'rgba(51, 65, 85, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (isSolved && Math.random() < 0.1) launchFireworks();
+                particles.forEach((particle, index) => {
+                    if (particle.alpha > 0) particle.update();
+                    else particles.splice(index, 1);
+                });
+            }
+
+            // 花火の初期化とアニメーション開始
+            setupCanvas();
+            animate();
+            window.addEventListener('resize', setupCanvas);
+        }
+
+        // --- LIFF初期化 ---
+        async function main() {
+            loadingScreen.textContent = "LIFFの準備をしています...";
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                
                 if (!liff.isLoggedIn()) {
                     liff.login();
-                    return;
-                }
-
-                const friendship = await liff.getFriendship();
-                if (!friendship.friendFlag) {
-                    showView('addFriend');
-                    return;
-                }
-                
-                showView('loading'); 
-                const profile = await liff.getProfile();
-                document.getElementById('lineUserId').value = profile.userId;
-
-                fetch(endpoint) 
-                    .then(response => response.json())
-                    .then(resData => {
-                        if (resData.status === 'success' && resData.data.length > 0) {
-                            const eventListContainer = document.getElementById('event-list');
-                            eventListContainer.innerHTML = '';
-                            resData.data.forEach(event => {
-                                const button = document.createElement('button');
-                                button.className = 'event-select-btn';
-                                
-                                const isMaleFull = event.maleApplicants >= event.maleCapacity;
-                                const isFemaleFull = event.femaleApplicants >= event.femaleCapacity;
-                                let statusText = '';
-                                if (isMaleFull && isFemaleFull) {
-                                    statusText = '<span class="status-full">満員御礼</span>';
-                                    button.disabled = true;
-                                } else if (isMaleFull) {
-                                    statusText = '<span class="status-partial">男性満員</span>';
-                                } else if (isFemaleFull) {
-                                    statusText = '<span class="status-partial">女性満員</span>';
-                                }
-
-                                button.innerHTML = `<span class="event-btn-title">${event.name}</span><span class="event-btn-details">${event.date} / ${event.time}</span>${statusText}`;
-                                
-                                button.onclick = () => {
-                                    if (isMaleFull && isFemaleFull) {
-                                        alert("このイベントは満員のため、お申し込みいただけません。");
-                                        return;
-                                    }
-                                    document.getElementById('event-title').textContent = event.name;
-                                    document.getElementById('event-details').innerHTML = `<strong>開催日時:</strong> ${event.date} ${event.time}`;
-                                    document.getElementById('selectedEventName').value = event.name;
-                                    showView('form');
-                                };
-                                eventListContainer.appendChild(button);
-                            });
-                            showView('eventSelection');
-                        } else {
-                            showView('loading');
-                            views.loading.innerHTML = `<h1>お知らせ</h1><p>${resData.message || "現在募集中のイベントはありません。"}</p>`;
-                        }
-                    })
-                    .catch(err => {
-                        console.error("イベント情報の取得に失敗:", err);
-                        showView('loading');
-                        views.loading.innerHTML = '<h1>エラー</h1><p>イベント情報の取得に失敗しました。</p>';
-                    });
-
-            } catch (err) {
-                console.error(err);
-                showView('loading');
-                views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。</p><p><small>エラー: ${err.message}</small></p>`;
-            }
-        }
-
-        const form = document.getElementById('applicationForm');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const sendingOverlay = document.getElementById('sending-overlay');
-            sendingOverlay.style.display = 'flex';
-            document.getElementById('form-view').style.display = 'none';
-
-            const fileInput = document.getElementById('id-upload');
-            const file = fileInput.files[0];
-
-            const data = {
-                lineUserId: document.getElementById('lineUserId').value,
-                eventName: document.getElementById('selectedEventName').value, 
-                name: document.getElementById('name').value,
-                age: document.getElementById('age').value,
-                gender: document.getElementById('gender').value,
-                prefecture: document.getElementById('prefecture').value,
-            };
-
-            if (file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function() {
-                    data.fileData = reader.result;
-                    data.fileName = file.name;
-                    sendData(data);
-                };
-                reader.onerror = function() {
-                    alert('ファイルの読み込みに失敗しました。');
-                    sendingOverlay.style.display = 'none';
-                    document.getElementById('form-view').style.display = 'block';
-                };
-            } else {
-                sendData(data);
-            }
-        });
-
-        function sendData(data) {
-            const endpoint = 'https://script.google.com/macros/s/AKfycby5rly7LHTlE9UMKVQlMZpg7Rcj5DOu0MiIs5BH8jKm35VUXe4dfJx5aqPCb7B67nXVYg/exec';
-            
-            fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(resData => {
-                document.getElementById('sending-overlay').style.display = 'none';
-                
-                if (resData.status === 'success') {
-                    document.getElementById('submission-complete-view').style.display = 'block';
-                } else if (resData.status === 'full' || resData.status === 'closed') {
-                    alert(resData.message);
-                    document.getElementById('form-view').style.display = 'block';
                 } else {
-                    alert('サーバーでエラーが発生しました: ' + (resData.message || '不明なエラー'));
-                    document.getElementById('form-view').style.display = 'block';
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    
+                    initializeGame();
                 }
-            })
-            .catch(error => {
-                document.getElementById('sending-overlay').style.display = 'none';
-                document.getElementById('form-view').style.display = 'block';
-                alert('送信中にエラーが発生しました: ' + error);
-            });
+            } catch (err) {
+                 console.error(err);
+                 loadingScreen.textContent = `LIFFの初期化に失敗しました。\n\nエラー内容:\n${JSON.stringify(err)}`;
+            }
         }
+        
+        document.addEventListener('DOMContentLoaded', main);
     </script>
 </body>
 </html>
