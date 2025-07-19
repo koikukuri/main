@@ -1,132 +1,372 @@
-/**
- * LINE Developersコンソールで取得した、あなたのチャネルのアクセストークンを設定してください。
- * スクリプトプロパティに設定することを強く推奨します。
- */
-const CHANNEL_ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty('CHANNEL_ACCESS_TOKEN');
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koi-Kukuri イベント申し込み</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d81b60; font-size: 24px; margin-bottom: 10px; }
+        .intro-text { text-align: center; font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 20px; }
+        .event-details { text-align: center; background-color: #fffde7; border: 1px dashed #fbc02d; padding: 12px; border-radius: 8px; margin-bottom: 25px; font-size: 16px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        input[type="text"], input[type="number"], input[type="file"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input[type="file"] { padding: 5px; }
+        .file-note { font-size: 12px; color: #666; margin-top: 5px; }
+        .privacy-policy { margin-top: 25px; padding: 15px; border: 1px solid #eee; border-radius: 8px; height: 120px; overflow-y: scroll; background-color: #f9f9f9; font-size: 12px; color: #555; }
+        .checkbox-group { display: flex; align-items: center; margin-top: 15px; }
+        .checkbox-group input { margin-right: 10px; }
+        .submit-btn, .add-friend-btn, .event-select-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; display: block; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
+        .button-group { margin-top: 20px; }
+        .button-group a { display: inline-block; padding: 12px 24px; margin: 5px; border-radius: 8px; text-decoration: none; font-weight: bold; }
+        .profile-btn { background-color: #d81b60; color: white; }
+        .later-btn { background-color: #eee; color: #333; }
+        
+        .event-select-btn {
+            position: relative;
+            background-color: #fff;
+            color: #333;
+            border: 2px solid #d81b60;
+            text-align: left;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .event-select-btn:hover:not(:disabled) {
+            background-color: #fdf2f8;
+            transform: translateY(-2px);
+        }
+        .event-btn-title {
+            font-size: 18px;
+            color: #d81b60;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .event-btn-details {
+            font-size: 15px;
+            color: #555;
+            font-weight: normal;
+        }
+        .status-full, .status-partial {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-full {
+            background-color: #6c757d;
+            color: white;
+        }
+        .status-partial {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .event-select-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: #ccc;
+        }
+        .event-select-btn:disabled .event-btn-title {
+            color: #6c757d;
+        }
 
-/**
- * 参加者の情報が記載されているスプレッドシートのシート名
- */
-const USER_SHEET_NAME = '参加中';
+        .loading-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-container p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 20px;
+        }
+        .spinner-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        .spinner-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 6px solid #fdeaf1;
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+        .spinner-rotor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: rotate-rotor 2s linear infinite;
+        }
+        .loading-heart {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            fill: #d81b60;
+            animation: counter-rotate-rotor 2s linear infinite;
+        }
+        @keyframes rotate-rotor {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes counter-rotate-rotor {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        .view {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-view" class="container view" style="display: block;">
+        <h1>読み込み中...</h1>
+        <p class="intro-text">アプリを準備しています。<br>少々お待ちください。</p>
+    </div>
 
-/**
- * デバッグログを記録するシート名
- */
-const LOG_SHEET_NAME = 'デバッグログ';
+    <div id="add-friend-view" class="container view">
+        <h1>はじめに</h1>
+        <p class="intro-text" style="text-align: left;">サービスをご利用いただくには、まず公式アカウントの友だち追加をお願いいたします。</p>
+        <br>
+        <a href="https://lin.ee/qcYOUh7" class="add-friend-btn">LINEで友だち追加する</a>
+        <p class="intro-text" style="text-align: center; margin-top: 15px;">友だち追加後、メニューの「参加申し込み」からお申込みください。</p>
+    </div>
 
-/**
- * ログをスプレッドシートに書き込む関数
- * @param {string} message - 記録するメッセージ
- */
-function logToSheet(message) {
-  try {
-    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    let logSheet = spreadsheet.getSheetByName(LOG_SHEET_NAME);
+    <div id="event-selection-view" class="container view">
+        <h1>イベントを選択</h1>
+        <p class="intro-text">参加したいイベントを選んでください。</p>
+        <div id="event-list">
+            <!-- ここに募集中のイベントがボタンとして自動で追加されます -->
+        </div>
+    </div>
+
+    <div id="form-view" class="container view">
+        <h1 id="event-title">イベント申し込み</h1>
+        <div class="event-details" id="event-details"></div>
+        <form id="applicationForm">
+            <input type="hidden" id="lineUserId" name="lineUserId">
+            <input type="hidden" id="selectedEventName" name="eventName">
+            <div class="form-group"><label for="name">氏名</label><input type="text" id="name" name="name" required></div>
+            <div class="form-group"><label for="age">年齢</label><input type="number" id="age" name="age" min="18" required></div>
+            <div class="form-group"><label for="gender">性別</label><select id="gender" name="gender" required><option value="">選択してください</option><option value="男性">男性</option><option value="女性">女性</option><option value="その他">その他</option></select></div>
+            <div class="form-group"><label for="prefecture">都道府県</label><select id="prefecture" name="prefecture" required><option value="">選択してください</option><option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option></select></div>
+            <div class="form-group"><label for="id-upload">身分証アップロード</label><input type="file" id="id-upload" name="id-upload" accept="image/*"><p class="file-note">※テストプレイのため、提出は任意です。</p></div>
+            <div class="privacy-policy"><p><strong>プライバシーポリシー</strong></p><p>（ここにプライバシーポリシーのテキストを記載します。）</p></div>
+            <div class="checkbox-group"><input type="checkbox" id="privacy-consent" name="privacy-consent" required><label for="privacy-consent">プライバシーポリシーに同意します</label></div><br>
+            <button type="submit" class="submit-btn">申し込みを確定する</button>
+        </form>
+    </div>
+
+    <div id="submission-complete-view" class="container view">
+        <h2>お申し込み<br>ありがとうございます！</h2>
+        <p>申し込み内容の詳細は、LINEのメッセージをご確認ください。<br>この画面は閉じていただいて構いません。</p>
+        <div class="button-group">
+            <a href="#" onclick="liff.closeWindow(); return false;" class="later-btn">ウィンドウを閉じる</a>
+        </div>
+    </div>
     
-    if (!logSheet) {
-      logSheet = spreadsheet.insertSheet(LOG_SHEET_NAME);
-      logSheet.appendRow(['タイムスタンプ', 'ログメッセージ']);
-    }
-    
-    const timestamp = new Date();
-    logSheet.appendRow([timestamp, message]);
-  } catch (e) {
-    console.error("スプレッドシートへのログ書き込みに失敗しました:", e);
-  }
-}
+    <div id="sending-overlay" class="loading-container">
+        <div class="spinner-wrapper">
+            <div class="spinner-track"></div>
+            <div class="spinner-rotor">
+                <svg class="loading-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+            </div>
+        </div>
+        <p>送信中...</p>
+    </div>
 
-/**
- * LIFFアプリからPOSTリクエストを受け取ったときに実行される関数
- */
-function doPost(e) {
-  logToSheet("doPost関数が開始されました。");
-  try {
-    const data = JSON.parse(e.postData.contents);
-    // LIFFアプリから送られてくるのは 'userId' です
-    const userId = data.userId; 
+    <script>
+        document.addEventListener('DOMContentLoaded', main);
 
-    if (!userId) {
-      logToSheet("エラー: LIFFアプリからユーザーIDが送られてきませんでした。");
-      throw new Error("ユーザーIDがありません。");
-    }
-    logToSheet(`クリアしたユーザーのID: 「${userId}」`);
+        async function main() {
+            const liffId = "2007667389-LbQyBzQX";
+            const endpoint = 'https://script.google.com/macros/s/AKfycbyLGE9OBTeNjcTwnFz_Z3YLfVu-qVaWyyiPc7cwI2JAmN15NgTC_PPeqyCr3fzA63fiHw/exec';
 
-    // --- スプレッドシートから名前を検索する機能 ---
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(USER_SHEET_NAME);
-    if (!sheet) {
-      logToSheet(`エラー: シート「${USER_SHEET_NAME}」が見つかりません。`);
-      throw new Error(`シート「${USER_SHEET_NAME}」が見つかりません。`);
-    }
-    logToSheet(`シート「${USER_SHEET_NAME}」を正常に取得しました。`);
+            const views = {
+                loading: document.getElementById('loading-view'),
+                addFriend: document.getElementById('add-friend-view'),
+                eventSelection: document.getElementById('event-selection-view'),
+                form: document.getElementById('form-view'),
+                complete: document.getElementById('submission-complete-view')
+            };
 
-    const allData = sheet.getDataRange().getValues();
-    let userName = null;
-    // B列(インデックス1)でユーザーIDを検索し、一致した行のD列(インデックス3)の名前を取得します
-    for (let i = 1; i < allData.length; i++) { // 1行目はヘッダーなのでi=1から
-      if (allData[i][1] === userId) { // B列のIDが一致したら
-        userName = allData[i][3]; // D列の名前を取得
-        break;
-      }
-    }
+            const showView = (viewName) => {
+                for (const key in views) {
+                    if (Object.prototype.hasOwnProperty.call(views, key)) {
+                        views[key].style.display = 'none';
+                    }
+                }
+                if (views[viewName]) {
+                    views[viewName].style.display = 'block';
+                }
+            };
 
-    if (!userName) {
-        logToSheet(`エラー: シート内でユーザーID「${userId}」に対応する名前が見つかりませんでした。`);
-        // 名前が見つからない場合は、デフォルトの名前にするなどの対応も可能
-        userName = "名前不明の参加者"; 
-    }
-    logToSheet(`シートから名前「${userName}」を取得しました。`);
-    // --- ここまで ---
+            if (!liff.isInClient()) {
+                showView('loading');
+                views.loading.innerHTML = `<h1>LINEで開いてください</h1><p>このページはLINEアプリでご利用いただけます。</p><a href="https://liff.line.me/${liffId}">LINEで開く</a>`;
+                return;
+            }
 
-    const messageText = `【クリア速報🎉】\n${userName}さんがじゃんけんの謎を解きました！`;
-    logToSheet(`作成したメッセージ: ${messageText}`);
-    
-    // 送信先として、B列の全てのユーザーIDを取得
-    const userIdsToSend = allData.slice(1) // ヘッダーを除外
-                                 .map(row => row[1]) // B列のIDのみを抽出
-                                 .filter(String); // 空のセルを除外
-    
-    logToSheet(`取得した送信先ユーザーIDの数: ${userIdsToSend.length}件`);
-    logToSheet(`取得した送信先ユーザーIDリスト: ${JSON.stringify(userIdsToSend)}`);
+            try {
+                await liff.init({ liffId: liffId });
 
-    if (userIdsToSend.length === 0) {
-      logToSheet("送信先のユーザーIDが0件でした。処理を中断します。");
-      return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'No users to notify.' }));
-    }
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
 
-    sendPushMessage(userIdsToSend, messageText);
-    logToSheet("sendPushMessage関数を呼び出し、処理は正常に終了しました。");
+                const friendship = await liff.getFriendship();
+                if (!friendship.friendFlag) {
+                    showView('addFriend');
+                    return;
+                }
+                
+                showView('loading'); 
+                const profile = await liff.getProfile();
+                document.getElementById('lineUserId').value = profile.userId;
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }));
+                fetch(endpoint) 
+                    .then(response => response.json())
+                    .then(resData => {
+                        if (resData.status === 'success' && resData.data.length > 0) {
+                            const eventListContainer = document.getElementById('event-list');
+                            eventListContainer.innerHTML = '';
+                            resData.data.forEach(event => {
+                                const button = document.createElement('button');
+                                button.className = 'event-select-btn';
+                                
+                                const isMaleFull = event.maleApplicants >= event.maleCapacity;
+                                const isFemaleFull = event.femaleApplicants >= event.femaleCapacity;
+                                let statusText = '';
+                                if (isMaleFull && isFemaleFull) {
+                                    statusText = '<span class="status-full">満員御礼</span>';
+                                    button.disabled = true;
+                                } else if (isMaleFull) {
+                                    statusText = '<span class="status-partial">男性満員</span>';
+                                } else if (isFemaleFull) {
+                                    statusText = '<span class="status-partial">女性満員</span>';
+                                }
 
-  } catch (error) {
-    logToSheet(`doPost関数全体でエラーが発生しました: ${error.toString()}`);
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }));
-  }
-}
+                                button.innerHTML = `<span class="event-btn-title">${event.name}</span><span class="event-btn-details">${event.date} / ${event.time}</span>${statusText}`;
+                                
+                                button.onclick = () => {
+                                    if (button.disabled) {
+                                        alert("このイベントは満員のため、お申し込みいただけません。");
+                                        return;
+                                    }
+                                    document.getElementById('event-title').textContent = event.name;
+                                    document.getElementById('event-details').innerHTML = `<strong>開催日時:</strong> ${event.date} ${event.time}`;
+                                    document.getElementById('selectedEventName').value = event.name;
+                                    showView('form');
+                                };
+                                eventListContainer.appendChild(button);
+                            });
+                            showView('eventSelection');
+                        } else {
+                            showView('loading');
+                            views.loading.innerHTML = `<h1>お知らせ</h1><p>${resData.message || "現在募集中のイベントはありません。"}</p>`;
+                        }
+                    })
+                    .catch(err => {
+                        console.error("イベント情報の取得に失敗:", err);
+                        showView('loading');
+                        views.loading.innerHTML = '<h1>エラー</h1><p>イベント情報の取得に失敗しました。</p>';
+                    });
 
-/**
- * 指定されたユーザーIDリストにプッシュメッセージを送信する
- */
-function sendPushMessage(userIds, text) {
-  const url = 'https://api.line.me/v2/bot/message/multicast';
-  const payload = { to: userIds, messages: [{ type: 'text', text: text }] };
-  const options = {
-    'method': 'post',
-    'contentType': 'application/json',
-    'headers': { 'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN },
-    'payload': JSON.stringify(payload),
-    'muteHttpExceptions': true
-  };
-  
-  logToSheet(`LINE APIに送信する直前のデータ: ${JSON.stringify(payload)}`);
-  const response = UrlFetchApp.fetch(url, options);
-  const responseCode = response.getResponseCode();
-  const responseBody = response.getContentText();
-  
-  logToSheet(`LINE APIからの応答コード: ${responseCode}`);
-  logToSheet(`LINE APIからの応答内容: ${responseBody}`);
+            } catch (err) {
+                console.error(err);
+                showView('loading');
+                views.loading.innerHTML = `<h1>エラーが発生しました</h1><p>LIFFアプリの起動に失敗しました。</p><p><small>エラー: ${err.message}</small></p>`;
+            }
+        }
 
-  if (responseCode < 200 || responseCode >= 300) {
-    throw new Error(`Failed to send messages. Response: ${responseBody}`);
-  }
-}
+        const form = document.getElementById('applicationForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const sendingOverlay = document.getElementById('sending-overlay');
+            sendingOverlay.style.display = 'flex';
+            document.getElementById('form-view').style.display = 'none';
+
+            const fileInput = document.getElementById('id-upload');
+            const file = fileInput.files[0];
+
+            const data = {
+                lineUserId: document.getElementById('lineUserId').value,
+                eventName: document.getElementById('selectedEventName').value, 
+                name: document.getElementById('name').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                prefecture: document.getElementById('prefecture').value,
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function() {
+                    data.fileData = reader.result;
+                    data.fileName = file.name;
+                    sendData(data);
+                };
+                reader.onerror = function() {
+                    alert('ファイルの読み込みに失敗しました。');
+                    sendingOverlay.style.display = 'none';
+                    document.getElementById('form-view').style.display = 'block';
+                };
+            } else {
+                sendData(data);
+            }
+        });
+
+        function sendData(data) {
+            const endpoint = 'https://script.google.com/macros/s/AKfycbyLGE9OBTeNjcTwnFz_Z3YLfVu-qVaWyyiPc7cwI2JAmN15NgTC_PPeqyCr3fzA63fiHw/exec';
+            
+            fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(resData => {
+                document.getElementById('sending-overlay').style.display = 'none';
+                
+                if (resData.status === 'success') {
+                    document.getElementById('submission-complete-view').style.display = 'block';
+                } else if (resData.status === 'full' || resData.status === 'closed') {
+                    alert(resData.message);
+                    document.getElementById('form-view').style.display = 'block';
+                } else {
+                    alert('サーバーでエラーが発生しました: ' + (resData.message || '不明なエラー'));
+                    document.getElementById('form-view').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                document.getElementById('sending-overlay').style.display = 'none';
+                document.getElementById('form-view').style.display = 'block';
+                alert('送信中にエラーが発生しました: ' + error);
+            });
+        }
+    </script>
+</body>
+</html>
