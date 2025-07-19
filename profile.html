@@ -18,17 +18,12 @@
         label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
         label .required { color: #d81b60; font-size: 12px; margin-left: 5px; }
         input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        input[type="file"] { padding: 5px; }
-        .file-note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
         textarea { height: 120px; resize: vertical; }
         .submit-btn { width: 100%; background-color: #d81b60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         #submission-complete { text-align: center; padding: 40px 20px; display: none; }
         #submission-complete h2 { color: #d81b60; }
 
+        /* ▼▼▼ ローディング画面のスタイルを追加 ▼▼▼ */
         .loading-container {
             display: none;
             position: fixed;
@@ -114,20 +109,7 @@
                 <input type="text" id="nickname" name="nickname" required>
             </div>
             
-            <div class="form-group">
-                <label for="age">年齢<span class="required">必須</span></label>
-                <input type="number" id="age" name="age" required>
-            </div>
-
-            <div class="form-group">
-                <label for="gender">性別<span class="required">必須</span></label>
-                <select id="gender" name="gender" required>
-                    <option value="">選択してください</option>
-                    <option value="男性">男性</option>
-                    <option value="女性">女性</option>
-                    <option value="その他">その他</option>
-                </select>
-            </div>
+            <!-- ▼▼▼ 年齢と性別の項目を削除しました ▼▼▼ -->
 
             <div class="form-group">
                 <label for="occupation">職業</label>
@@ -139,11 +121,7 @@
                 <input type="text" id="hobbies" name="hobbies" placeholder="例：映画鑑賞, 旅行, カフェ巡り">
             </div>
 
-            <div class="form-group">
-                <label for="profile-image">プロフィール画像<span style="font-size:12px; color:#666;">（イラストでも可）</span></label>
-                <input type="file" id="profile-image" name="profile-image" accept="image/*">
-                <p class="file-note">イメージが伝わる画像を登録しましょう</p>
-            </div>
+            <!-- ▼▼▼ プロフィール画像の項目を削除しました ▼▼▼ -->
 
             <div class="form-group">
                 <label for="introduction">自己紹介</label>
@@ -162,7 +140,6 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         async function main() {
-            // ▼▼▼【重要】プロフィール登録用に作成した、新しいLIFF IDに必ず書き換えてください ▼▼▼
             await liff.init({ liffId: "2007667389-KRwMmRwO" });
 
             if (!liff.isLoggedIn()) {
@@ -172,27 +149,20 @@
                 const userId = profile.userId;
                 document.getElementById('lineUserId').value = userId;
 
-                // ▼▼▼【重要】プロフィール情報を取得してフォームに自動入力します ▼▼▼
                 const endpoint = 'https://script.google.com/macros/s/AKfycbyKpmAPE5sI2IEKmp998uVSr8zWO7OLfrEO50A_ZA6ZdW3zKM8ndj1PfcRDWMnBU3S9Tw/exec';
                 
                 fetch(`${endpoint}?userId=${userId}`)
                     .then(response => response.json())
                     .then(res => {
                         if (res.status === 'success' && res.data) {
-                            // 既存データがあればフォームに設定
-                            // ▼▼▼【修正】ニックネームは、保存されているデータがあればそれを使い、なければ空欄にします ▼▼▼
                             document.getElementById('nickname').value = res.data.nickname || '';
-                            document.getElementById('age').value = res.data.age || '';
-                            document.getElementById('gender').value = res.data.gender || '';
                             document.getElementById('occupation').value = res.data.occupation || '';
                             document.getElementById('hobbies').value = res.data.hobbies || '';
                             document.getElementById('introduction').value = res.data.introduction || '';
-                        } 
-                        // ▼▼▼【修正】既存データがない場合、LINEの表示名を自動入力する処理を削除しました ▼▼▼
+                        }
                     })
                     .catch(error => {
                         console.error("プロフィール情報の取得に失敗しました:", error);
-                        // エラー時も、自動入力は行わない
                     });
             }
         }
@@ -206,35 +176,16 @@
             loadingOverlay.style.display = 'flex';
             document.getElementById('form-container').style.display = 'none';
 
-            const fileInput = document.getElementById('profile-image');
-            const file = fileInput.files[0];
-
+            // ▼▼▼ ファイル関連の処理を削除しました ▼▼▼
             const data = {
                 lineUserId: document.getElementById('lineUserId').value,
                 nickname: document.getElementById('nickname').value,
-                age: document.getElementById('age').value,
-                gender: document.getElementById('gender').value,
                 occupation: document.getElementById('occupation').value,
                 hobbies: document.getElementById('hobbies').value,
                 introduction: document.getElementById('introduction').value,
             };
-
-            if (file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function() {
-                    data.fileData = reader.result;
-                    data.fileName = file.name;
-                    sendData(data);
-                };
-                reader.onerror = function() {
-                    alert('ファイルの読み込みに失敗しました。');
-                    loadingOverlay.style.display = 'none';
-                    document.getElementById('form-container').style.display = 'block';
-                };
-            } else {
-                sendData(data);
-            }
+            
+            sendData(data);
         });
 
         function sendData(data) {
