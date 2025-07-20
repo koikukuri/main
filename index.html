@@ -168,7 +168,6 @@
             <input type="hidden" id="lineUserId" name="lineUserId">
             <input type="hidden" id="selectedEventName" name="eventName">
             <div class="form-group"><label for="name">氏名</label><input type="text" id="name" name="name" required></div>
-            <!-- ▼▼▼【追加】メールアドレスの入力欄 ▼▼▼ -->
             <div class="form-group">
                 <label for="email">メールアドレス</label>
                 <input type="email" id="email" name="email" required placeholder="contact@example.com">
@@ -177,7 +176,15 @@
             <div class="form-group"><label for="gender">性別</label><select id="gender" name="gender" required><option value="">選択してください</option><option value="男性">男性</option><option value="女性">女性</option></select></div>
             <div class="form-group"><label for="prefecture">都道府県</label><select id="prefecture" name="prefecture" required><option value="">選択してください</option><option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option><option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option><option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option></select></div>
             <div class="form-group"><label for="id-upload">身分証アップロード</label><input type="file" id="id-upload" name="id-upload" accept="image/*"><p class="file-note">※テストプレイのため、提出は任意です。</p></div>
-            <div class="privacy-policy"><p><strong>プライバシーポリシー</strong></p><p>（ここにプライバシーポリシーのテキストを記載します。）</p></div>
+            <!-- ▼▼▼【修正】プライバシーポリシーのひな形を挿入しました ▼▼▼ -->
+            <div class="privacy-policy">
+                <p><strong>プライバシーポリシー</strong></p>
+                <p>Koi-Kukuri運営事務局（以下「当事務局」）は、本サービスの利用者（以下「ユーザー」）の個人情報について、以下のとおりプライバシーポリシーを定めます。</p>
+                <p><strong>第1条（個人情報の取得）</strong><br>当事務局は、ユーザーが本サービスを利用するにあたり、LINE User ID、氏名、メールアドレス、年齢、性別、その他申込フォームにご入力いただいた情報を取得します。</p>
+                <p><strong>第2条（利用目的）</strong><br>取得した個人情報は、イベント運営、本人確認、お問い合わせ対応、Gather参加URLの送付、及びサービスの改善のために利用します。</p>
+                <p><strong>第3条（第三者提供）</strong><br>当事務局は、法令に基づく場合を除き、ユーザーの同意なく個人情報を第三者に提供しません。</p>
+                <p><strong>第4条（安全管理）</strong><br>当事務局は、個人情報の漏洩、滅失又はき損の防止その他の個人情報の安全管理のために必要かつ適切な措置を講じます。</p>
+            </div>
             <div class="checkbox-group"><input type="checkbox" id="privacy-consent" name="privacy-consent" required><label for="privacy-consent">プライバシーポリシーに同意します</label></div><br>
             <button type="submit" class="submit-btn">申し込みを確定する</button>
         </form>
@@ -234,7 +241,11 @@
             }
 
             try {
-                await liff.init({ liffId: liffId });
+                // ▼▼▼【修正】LIFF初期化とイベント取得を並行して行い、体感速度を向上させます ▼▼▼
+                const liffPromise = liff.init({ liffId: liffId });
+                const eventsPromise = fetch(endpoint);
+
+                await liffPromise; // LIFFの初期化完了を待つ
 
                 if (!liff.isLoggedIn()) {
                     liff.login();
@@ -247,57 +258,51 @@
                     return;
                 }
                 
-                showView('loading'); 
                 const profile = await liff.getProfile();
                 document.getElementById('lineUserId').value = profile.userId;
 
-                fetch(endpoint) 
-                    .then(response => response.json())
-                    .then(resData => {
-                        if (resData.status === 'success' && resData.data.length > 0) {
-                            const eventListContainer = document.getElementById('event-list');
-                            eventListContainer.innerHTML = '';
-                            resData.data.forEach(event => {
-                                const button = document.createElement('button');
-                                button.className = 'event-select-btn';
-                                
-                                const isMaleFull = event.maleApplicants >= event.maleCapacity;
-                                const isFemaleFull = event.femaleApplicants >= event.femaleCapacity;
-                                let statusText = '';
-                                if (isMaleFull && isFemaleFull) {
-                                    statusText = '<span class="status-full">満員御礼</span>';
-                                    button.disabled = true;
-                                } else if (isMaleFull) {
-                                    statusText = '<span class="status-partial">男性満員</span>';
-                                } else if (isFemaleFull) {
-                                    statusText = '<span class="status-partial">女性満員</span>';
-                                }
+                // イベント情報の取得完了を待つ
+                const response = await eventsPromise;
+                const resData = await response.json();
 
-                                button.innerHTML = `<span class="event-btn-title">${event.name}</span><span class="event-btn-details">${event.date} / ${event.time}</span>${statusText}`;
-                                
-                                button.onclick = () => {
-                                    if (button.disabled) {
-                                        alert("このイベントは満員のため、お申し込みいただけません。");
-                                        return;
-                                    }
-                                    document.getElementById('event-title').textContent = event.name;
-                                    document.getElementById('event-details').innerHTML = `<strong>開催日時:</strong> ${event.date} ${event.time}`;
-                                    document.getElementById('selectedEventName').value = event.name;
-                                    showView('form');
-                                };
-                                eventListContainer.appendChild(button);
-                            });
-                            showView('eventSelection');
-                        } else {
-                            showView('loading');
-                            views.loading.innerHTML = `<h1>お知らせ</h1><p>${resData.message || "現在募集中のイベントはありません。"}</p>`;
+                if (resData.status === 'success' && resData.data.length > 0) {
+                    const eventListContainer = document.getElementById('event-list');
+                    eventListContainer.innerHTML = '';
+                    resData.data.forEach(event => {
+                        const button = document.createElement('button');
+                        button.className = 'event-select-btn';
+                        
+                        const isMaleFull = event.maleApplicants >= event.maleCapacity;
+                        const isFemaleFull = event.femaleApplicants >= event.femaleCapacity;
+                        let statusText = '';
+                        if (isMaleFull && isFemaleFull) {
+                            statusText = '<span class="status-full">満員御礼</span>';
+                            button.disabled = true;
+                        } else if (isMaleFull) {
+                            statusText = '<span class="status-partial">男性満員</span>';
+                        } else if (isFemaleFull) {
+                            statusText = '<span class="status-partial">女性満員</span>';
                         }
-                    })
-                    .catch(err => {
-                        console.error("イベント情報の取得に失敗:", err);
-                        showView('loading');
-                        views.loading.innerHTML = '<h1>エラー</h1><p>イベント情報の取得に失敗しました。</p>';
+
+                        button.innerHTML = `<span class="event-btn-title">${event.name}</span><span class="event-btn-details">${event.date} / ${event.time}</span>${statusText}`;
+                        
+                        button.onclick = () => {
+                            if (button.disabled) {
+                                alert("このイベントは満員のため、お申し込みいただけません。");
+                                return;
+                            }
+                            document.getElementById('event-title').textContent = event.name;
+                            document.getElementById('event-details').innerHTML = `<strong>開催日時:</strong> ${event.date} ${event.time}`;
+                            document.getElementById('selectedEventName').value = event.name;
+                            showView('form');
+                        };
+                        eventListContainer.appendChild(button);
                     });
+                    showView('eventSelection');
+                } else {
+                    showView('loading');
+                    views.loading.innerHTML = `<h1>お知らせ</h1><p>${resData.message || "現在募集中のイベントはありません。"}</p>`;
+                }
 
             } catch (err) {
                 console.error(err);
@@ -317,7 +322,6 @@
             const fileInput = document.getElementById('id-upload');
             const file = fileInput.files[0];
 
-            // ▼▼▼ 送信するデータにメールアドレスを追加 ▼▼▼
             const data = {
                 lineUserId: document.getElementById('lineUserId').value,
                 eventName: document.getElementById('selectedEventName').value, 
@@ -347,7 +351,6 @@
         });
 
         function sendData(data) {
-            // ▼▼▼【重要】ご提示いただいた新しいURLに更新しました ▼▼▼
             const endpoint = 'https://script.google.com/macros/s/AKfycbySxHKkrOw9psW7mPS1QOHEO94sZ4xIKJDA0AQlFVv0i2d7Z55gH8Svy_yfcRcQeU04cA/exec';
             
             fetch(endpoint, {
