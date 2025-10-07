@@ -1,323 +1,223 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koi-Kukuri | 会話でがんばらない、アバター謎解き婚活</title>
-
-<meta name="description" content="会話が苦手でも大丈夫。ゲーム感覚で自然に出会える、新しい形の謎解き婚活「Koi-Kukuri」。顔出し不要のアバターで、一緒に謎を解くうちに自然と心が通じ合います。次回は10月中旬開催予定！">
-<meta property="og:title" content="Koi-Kukuri | 会話でがんばらない、アバター謎解き婚活">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コイククリ (Koi-Kukuri) | 会話でがんばらない、アバター謎解き婚活</title>
+<meta name="description" content="【コイククリ | Koi-Kukuri】もう会話に疲れない。MetaLife（メタライフ）を使った無料のアバター謎解き婚活。顔出し不要で、ゲーム感覚で自然な出会いを。次回は2025年10月25日開催！">
+<meta property="og:title" content="コイククリ (Koi-Kukuri) | 会話でがんばらない、アバター謎解き婚活">
 <meta property="og:description" content="顔出し不要のアバターでゲームのように楽しみながら、自然とつながる出会いを体験しませんか？">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://koikukuri.github.io/info/">
-<meta property="og:image" content="https://koikukuri.github.io/info/main-visual.png">
-<meta property="og:site_name" content="Koi-Kukuri">
+<meta property="og:site_name" content="コイククリ (Koi-Kukuri)">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#fdfcfa">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-    /* --- 全体のデザインをリニューアル --- */
-    :root {
-        --main-color: #e55c6e;
-        --accent-color: #feb47b;
-        --bg-color: #fdfcfa;
-        --text-color: #544a45;
-        --card-bg-color: #ffffff;
-    }
-
-    body {
-        font-family: 'M PLUS Rounded 1c', sans-serif;
-        line-height: 1.8;
-        color: var(--text-color);
-        background-color: var(--bg-color);
-        margin: 0;
-        padding: 0;
-        scroll-behavior: smooth;
-    }
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        text-align: center;
-    }
-    header {
-        padding: 40px 20px;
-        background-color: var(--card-bg-color);
-        border-radius: 24px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-        margin-bottom: 50px;
-    }
-    .main-visual {
-        max-width: 100%;
-        height: auto;
-        border-radius: 16px;
-        margin-bottom: 40px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
-    h1 {
-        font-size: 2.5em;
-        color: var(--main-color);
-        margin-bottom: 10px;
-        line-height: 1.4;
-    }
-    .sub-copy {
-        font-size: 1.1em;
-        color: #777;
-        margin-bottom: 30px;
-    }
-    .cta-button {
-        display: inline-block;
-        background: linear-gradient(135deg, #ff7e5f, #feb47b);
-        color: #fff;
-        padding: 15px 40px;
-        text-decoration: none;
-        font-weight: bold;
-        border-radius: 50px;
-        box-shadow: 0 4px 15px rgba(254, 180, 123, 0.5);
-        transition: all 0.3s ease;
-    }
-    .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(254, 180, 123, 0.7);
-    }
-    section {
-        background-color: var(--card-bg-color);
-        padding: 50px 30px;
-        margin-bottom: 50px;
-        border-radius: 24px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-        text-align: left;
-    }
-    .event-section, .line-section {
-        background-color: #fffaf0;
-        border: 2px dashed var(--accent-color);
-        text-align: center;
-    }
-    .event-section h3 {
-        font-size: 1.8em;
-        color: var(--main-color);
-    }
-    .event-section .period {
-        font-size: 1.2em;
-        font-weight: bold;
-        margin-bottom: 25px;
-        color: var(--main-color);
-    }
-    h2 {
-        font-size: 2em;
-        padding-bottom: 15px;
-        margin-bottom: 40px;
-        text-align: center;
-        width: 100%;
-        position: relative;
-        border-bottom: none;
-    }
-    h2::after {
-        content: '';
-        display: block;
-        width: 60px;
-        height: 4px;
-        background-color: var(--accent-color);
-        border-radius: 2px;
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    .features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 25px;
-    }
-    .feature-item {
-        background: #fafafa;
-        padding: 25px;
-        border-radius: 16px;
-        border-bottom: 4px solid var(--accent-color);
-    }
-    .feature-item h3 {
-        font-size: 1.5em;
-        margin-top: 0;
-        color: var(--main-color);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .feature-item h3 svg {
-        width: 28px;
-        height: 28px;
-        flex-shrink: 0;
-    }
-    .notes-list, .concept-target {
-        list-style: none;
-        padding-left: 0;
-    }
-    .notes-list li, .concept-target li {
-        background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e55c6e" class="bi bi-check-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>') no-repeat 0 8px;
-        padding-left: 25px;
-        margin-bottom: 10px;
-    }
-    .message-box {
-        background: var(--bg-color);
-        border: 1px solid #eee;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
-    }
-    .voices-section {
-        text-align: center;
-    }
-    .voice-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        text-align: left;
-        margin-top: 30px;
-    }
-    .voice-card {
-        background: #fafafa;
-        padding: 20px 20px 20px 25px;
-        border-radius: 16px;
-        border-left: 4px solid var(--accent-color);
-        position: relative;
-    }
-    .voice-card p {
-        margin: 0;
-    }
-    .voice-card::before {
-        content: '💬';
-        position: absolute;
-        top: 10px;
-        left: -10px;
-        font-size: 1.5em;
-        opacity: 0.5;
-    }
-    footer {
-        padding: 40px 20px 20px;
-        font-size: 0.9em;
-        color: #aaa;
-        text-align: center;
-    }
-    @media (max-width: 600px) {
-        h1 { font-size: 2em; }
-        h2 { font-size: 1.5em; }
-        .event-section h3 { font-size: 1.5em; }
-        section { padding: 40px 20px; }
-    }
+/* Reset / base */
+*, *::before, *::after {box-sizing: border-box;}
+:root{
+    --main-color:#e55c6e;
+    --accent-color:#feb47b;
+    --bg-color:#fdfcfa;
+    --text-color:#544a45;
+    --card-bg:#ffffff;
+    --radius:16px;
+    --shadow: 0 6px 18px rgba(0,0,0,0.04);
+    --max-width:800px;
+}
+html,body{height:100%;}
+body{
+    margin:0;
+    font-family:'M PLUS Rounded 1c', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg-color);
+    color:var(--text-color);
+    line-height:1.6;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+    scroll-behavior:smooth;
+}
+/* Layout */
+.container{max-width:var(--max-width);margin:24px auto;padding:12px;}
+header{background:#fff8f9;padding:28px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center}
+.main-visual {
+    width: 100%;
+    height: 200px; /* 元の高さの半分くらいに調整 */
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: block;
+    object-fit: cover; /* 縦横比を保ちながらトリミング */
+}
+h1{font-size:1.9rem;color:var(--main-color);margin:.25rem 0 8px;line-height:1.25}
+.sub-copy{color:#6f6a66;margin-bottom:12px}
+/* CTA */
+.cta-button{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:8px;padding:12px 28px;border-radius:999px;text-decoration:none;font-weight:700;
+    background:linear-gradient(135deg,var(--main-color),var(--accent-color));color:#fff;box-shadow:0 6px 20px rgba(254,180,123,0.35);
+    transition:transform .18s ease,box-shadow .18s ease;
+}
+.cta-button:hover{transform:translateY(-3px);}
+.cta-button:focus{outline:3px solid rgba(229,92,110,0.18);outline-offset:4px}
+/* Sections */
+main{margin-top:18px}
+section{background:var(--card-bg);padding:22px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:22px;text-align:left}
+.event-section, .line-section{background:#fffaf0;border:1.5px dashed var(--accent-color);text-align:center}
+.event-section h3{font-size:1.25rem;color:var(--main-color);margin:6px 0}
+.period{font-size:1.05rem;font-weight:700;color:var(--main-color);margin-bottom:10px}
+.event-summary{background:#fff;padding:12px;border-radius:10px;border:1px solid rgba(229,92,110,0.08);max-width:420px;margin:14px auto}
+.event-summary p{margin:6px 0;font-size:.95rem}
+h2{font-size:1.45rem;margin:0 0 18px;text-align:center;position:relative;padding-bottom:10px}
+h2::after{content:"";display:block;width:56px;height:4px;background:var(--accent-color);border-radius:2px;position:absolute;left:50%;bottom:0;transform:translateX(-50%)}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.feature-item{background:#fbfbfb;padding:16px;border-radius:12px;border-bottom:4px solid var(--accent-color)}
+.feature-item h3{font-size:1.05rem;margin:0 0 8px;color:var(--main-color);display:flex;align-items:center;gap:10px}
+.feature-item h3 svg{width:22px;height:22px;flex-shrink:0;display:inline-block}
+.feature-image{width:100%;height:auto;border-radius:8px;margin-top:12px;max-height:150px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.notes-list,.concept-target{list-style:none;padding:0;margin:0}
+.notes-list li,.concept-target li{padding-left:28px;margin-bottom:10px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e55c6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>') no-repeat 4px 6px;padding-left:26px}
+.message-box{background:var(--bg-color);border:1px solid #eee;padding:14px;border-radius:10px;box-shadow:inset 0 2px 8px rgba(0,0,0,0.03)}
+.voice-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+.voice-card{background:#fff;padding:12px;border-radius:10px;border-left:4px solid rgba(229,92,110,0.08)}
+a.line-add{display:inline-block}
+footer{text-align:center;padding:12px;color:#9a8f8c}
+@media (max-width:600px){
+    :root{--max-width:96vw}
+    h1{font-size:1.6rem}
+    h2{font-size:1.25rem}
+    section{padding:18px}
+    .cta-button{width:100%;padding:12px}
+}
 </style>
 </head>
 <body>
 
+<a class="skip-link" href="#main" style="position:absolute;left:-999px;top:auto;">メインコンテンツへスキップ</a>
+
 <div class="container">
-    <header>
-        <img src="main-visual.png" alt="Koi-Kukuriのイベント風景" class="main-visual">
-        <h1>もう、会話でがんばらない。<br>アバターで始める、謎解き婚活</h1>
-        <p class="sub-copy">顔出しなし／会話ベタOK／ゲーム感覚で自然に話せる</p>
-        <a href="#next-event" class="cta-button">次回イベント情報を見る！</a>
-    </header>
+<header role="banner">
+    <img src="https://koikukuri-ce0bd.web.app/LP/06.png" alt="コイククリのイベント風景" class="main-visual" loading="eager">
+    <h1>コイククリで、もう会話に悩まない。<br>内面で出会う、アバター謎解き婚活。</h1>
+    <p class="sub-copy">顔出し不要 / 会話ベタOK。<br><strong>【今だけ！】プレイベント 無料開催！</strong></p>
+    <p><a href="https://www.kokuchpro.com/event/8dfcd58754b4f5ed58124d943a633c17/" class="cta-button" target="_blank" rel="noopener noreferrer" aria-label="10月25日イベント詳細・お申し込み">【期間限定・無料】 10/25（土）詳細・お申し込み</a></p>
+</header>
 
-    <main>
+<main id="main" role="main">
 
 
-        <section id="next-event" class="event-section">
-            <h2>次回開催予定</h2>
-            <h3>パワーアップして帰ってきます！謎解き婚活イベント</h3>
-            <p class="period">📅 10月下旬開催予定！</p>
-            <p>
-                皆様からの熱いご要望にお応えし、いよいよ本格的な謎解き婚活イベントを開催します。<br>
-                詳細はLINE公式アカウントで先行発表しますので、ぜひ友だち追加してお待ちください！
-            </p>
-            <a href="https://lin.ee/1uZADWk" class="cta-button" target="_blank" rel="noopener noreferrer">LINEで最新情報を受け取る！</a>
-        </section>
+<!-- 次回イベントセクション -->
+<section id="next-event" class="event-section" aria-labelledby="next-event-heading">
+    <h2 id="next-event-heading">次回開催予定</h2>
+    <h3>コイククリの協力型謎解きイベント（MetaLife開催）</h3>
+    <p class="period">📅 2025年10月25日（土）14:00 - 16:00 開催！</p>
+    <p>
+        従来の婚活イベントで「何を話そうか」と緊張したり、疲れた経験はありませんか？<br>
+        コイククリは、<strong>MetaLife</strong>の仮想空間で行う全く新しいスタイル。謎解きという共通の目標に夢中になるうち、自然な協力体制と会話が生まれます。
+    </p>
 
-        <section>
-            <h2>Koi-Kukuriとは？</h2>
-            <p>
-                従来の婚活パーティーでは、初対面の人と何を話せばいいか困った経験はありませんか？<br>
-                コイククリなら、謎解きという共通のゴールがあるから、会話に困ることはありません。自然なコミュニケーションから、本当の自分を見せられる出会いを見つけましょう！
-            </p>
-            <p>こんな方にぴったりのサービスです。</p>
-            <ul class="concept-target">
-                <li>会話が苦手な方、人と出会うことに少し疲れてしまった方</li>
-                <li>地方に住んでいて出会いの機会が少ない方</li>
-                <li>初対面で顔を出すことに抵抗がある方</li>
-            </ul>
-        </section>
-        
-        <section>
-            <h2>Koi-Kukuriの3つの特徴</h2>
-            <div class="features">
-                <div class="feature-item">
-                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>【安心】</h3>
-                    <p>顔出し不要の<strong>アバター</strong>で参加。会場では近くの人とだけ話せるので、プライバシーを守りながら「2人だけで話したい」が自然にできます。</p>
-                </div>
-                <div class="feature-item">
-                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><path d="M12 2a5 5 0 0 0-5 5v3"></path><path d="M7 2a5 5 0 0 1 5 5v3"></path></svg>【自然】</h3>
-                    <p><strong>謎解き</strong>に夢中になるうち、自然と会話が生まれます。問題解決への姿勢や他者への気遣いなど、「素」の姿が自然と見えてきます。</p>
-                </div>
-                <div class="feature-item">
-                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"></path><path d="M9 22V12h6v10"></path><path d="M2 10.6L12 2l10 8.6"></path></svg>【手軽】</h3>
-                    <p>ご自宅から<strong>オンライン</strong>で参加できるため、交通費や移動時間はゼロ。全国の参加者と出会うチャンスが、あなたのすぐそばにあります。</p>
-                </div>
-            </div>
-        </section>
-        
-        <section>
-            <h2>参加にあたって</h2>
-            <ul class="notes-list">
-                <li>PCでの参加を推奨しますが、スマートフォンやタブレットからもアクセス可能です。アバターの移動や文字入力に、外付けキーボードがあるとより快適に操作いただけます。</li>
-                <li>顔出しは不要ですが、会話は音声が中心です。快適なコミュニケーションのため、イヤホンやヘッドホンのご用意をおすすめします。</li>
-                <li>謎を解くために、お手元にペンとメモ用紙をご用意いただくことをおすすめします。</li>
-                <li>ネットワーク環境が不安定な場合、イベントを円滑に進められない可能性があります。</li>
-            </ul>
-        </section>
-        
-        <section>
-            <h2>運営からの一言</h2>
-            <div class="message-box">
-                <p>
-                    人と出会うことに、少し疲れていませんか？<br>
-                    コイククリは、そんなあなたのために生まれました。「がんばって話さなくても、一緒に謎を解くうちに自然と心が通い合う」そんな心温まる出会いを届けたいと願っています。皆さまのご参加を心よりお待ちしております！
-                </p>
-            </div>
-        </section>
+    <div class="event-summary" role="region" aria-label="イベント概要">
+        <strong style="color:var(--main-color);display:block;margin-bottom:6px">イベント概要</strong>
+        <p><strong>日時</strong>: 2025年10月25日（土）14:00〜16:00</p>
+        <p><strong>会場</strong>: オンライン（MetaLife）</p>
+        <p><strong>参加費</strong>: 無料</p>
+    </div>
 
-        <section class="voices-section">
-            <h2>体験者の声</h2>
-            <p>お試し謎解きルームに参加された方から、嬉しい感想が届いています！</p>
-            <div class="voice-cards">
-                <div class="voice-card">
-                    <p>とても楽しかったです！</p>
-                </div>
-                <div class="voice-card">
-                    <p>「●●だ！」と気づいたときの脳汁がどばどば</p>
-                </div>
-                <div class="voice-card">
-                    <p>「●●のヒントを生かすアイデアがおもしろかったです！」</p>
-                </div>
-                <div class="voice-card">
-                    <p>ちょうどいい難易度でした</p>
-                </div>
-            </div>
-        </section>
-        
-        <section class="line-section">
-            <h2>最新情報をLINEでお届け</h2>
-            <p>
-                今後のイベント開催情報や、お得なキャンペーンのお知らせをLINE公式アカウントで配信します。<br>
-                ぜひ「友だち追加」して、最新情報を受け取ってください！
-            </p>
-            <a href="https://lin.ee/1uZADWk"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png" alt="友だち追加" height="36" border="0"></a>
-        </section>
+    <p><a href="https://www.kokuchpro.com/event/8dfcd58754b4f5ed58124d943a633c17/" class="cta-button" target="_blank" rel="noopener noreferrer">詳細・お申し込みはこちら！</a></p>
+    <p style="margin-top:12px;font-size:.95rem;"><a href="https://lin.ee/1uZADWk" target="_blank" rel="noopener noreferrer" style="color:var(--main-color);">LINE公式アカウントで最新情報を受け取る</a></p>
+</section>
 
-    </main>
+<!-- コイククリとは -->
+<section aria-labelledby="what-is">
+<h2 id="what-is">コイククリ (Koi-Kukuri) とは？</h2>
+<p>
+従来の婚活は、「頑張って話さなきゃ」というプレッシャーから疲れてしまいがちです。<strong>コイククリ (Koi-Kukuri)</strong> は、そんなお悩みを解消します。
+</p>
+<p>
+<strong>MetaLife</strong>という非日常の仮想空間で、参加者全員が<strong>協力して謎を解く</strong>という共通のゴールに向かいます。なぜなら、<strong>結婚生活とは、課題解決の連続だからです。</strong>
+</p>
+<p>
+謎解きを通じて、相手の<strong>課題解決に対する姿勢</strong>や、意見が対立したときに<strong>心地よい話し合いができるか</strong>を自然に見極められます。表面的なスペックではなく、<strong>未来のパートナーとしての本質的な資質</strong>を見つけましょう。
+</p>
 
-    <footer>
-        <p>&copy; 2025 Koi-Kukuri.</p>
-    </footer>
+<p>こんな方にぴったりのサービスです。</p>
+<ul class="concept-target">
+<li>会話が苦手で、婚活疲れを感じている方</li>
+<li>初対面で顔出しすることに抵抗がある方</li>
+<li>住んでいる場所に関係なく、多様な人と出会いたい方</li>
+</ul>
+</section>
+
+<!-- コイククリの特徴 -->
+<section aria-labelledby="features">
+<h2 id="features">コイククリの特徴</h2>
+<div class="features">
+<div class="feature-item">
+<h3>🎮 アバターで参加</h3>
+<p>顔出し不要でリラックス。自分らしいアバターで、無理なく参加できます。</p>
+<img src="https://koikukuri-ce0bd.web.app/LP/11.png" alt="アバター参加イメージ" class="feature-image">
 </div>
+
+<div class="feature-item">
+<h3>🧩 謎解きで自然に会話</h3>
+<p>共通の目的があるので、会話に困らない。自然なコミュニケーションが生まれます。</p>
+<img src="https://koikukuri-ce0bd.web.app/LP/07.png" alt="謎解きイメージ" class="feature-image">
+</div>
+
+<div class="feature-item">
+<h3>🌐 オンラインで全国から参加</h3>
+<p>場所に縛られず、全国の参加者とつながることができます。</p>
+<img src="https://koikukuri-ce0bd.web.app/LP/09.png" alt="オンライン参加イメージ" class="feature-image">
+</div>
+</div>
+</section>
+
+<!-- 注意事項 -->
+<section aria-labelledby="notes">
+<h2 id="notes">ご注意ください</h2>
+<ul class="notes-list">
+<li>イベント中の録画やスクリーンショットは禁止です。</li>
+<li>開始15分前にはログインをお願いいたします。</li>
+<li>参加費は無料ですが、正式リリース後は有料になる可能性があります。</li>
+</ul>
+</section>
+
+<!-- 体験者の声 -->
+<section aria-labelledby="voices">
+<h2 id="voices">体験者の声</h2>
+<div class="voice-cards">
+<div class="voice-card">
+<p>とても楽しかったです！ちょうどいい難易度でした</p>
+<p style="font-size:.85rem;color:#888"></p>
+</div>
+<div class="voice-card">
+<p>「●●だ！」と気づいたときの脳汁がどばどば</p>
+<p style="font-size:.85rem;color:#888"></p>
+</div>
+<div class="voice-card">
+<p>「●●のヒント」を生かすアイデアがおもしろかったです！</p>
+<p style="font-size:.85rem;color:#888"></p>
+</div>
+</div>
+</section>
+
+<!-- LINE情報 -->
+<section class="line-section" aria-labelledby="line-info">
+<h2 id="line-info">LINE公式アカウントで最新情報を受け取る</h2>
+<p>イベント情報や参加方法、最新のお知らせをLINEで受け取れます。</p>
+<p><a href="https://lin.ee/1uZADWk" target="_blank" rel="noopener noreferrer" class="cta-button line-add">LINEで友だち追加</a></p>
+</section>
+
+</main>
+
+<footer role="contentinfo">
+    <p>&copy; 2025 Koi-Kukuri.</p>
+</footer>
+</div>
+
 </body>
 </html>
