@@ -119,7 +119,16 @@ h2::after{content:"";display:block;width:56px;height:4px;background:var(--accent
 .feature-item h3 svg{width:22px;height:22px;flex-shrink:0;display:inline-block}
 .feature-image{width:100%;height:auto;border-radius:8px;margin-top:12px;max-height:150px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
 .notes-list,.concept-target{list-style:none;padding:0;margin:0}
-.notes-list li,.concept-target li{padding-left:28px;margin-bottom:10px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e55c6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>') no-repeat 4px 6px;padding-left:26px}
+
+/* ▼▼▼ここから修正▼▼▼ */
+.notes-list li,.concept-target li{
+    padding-left: 28px; /* アイコン分のスペース */
+    margin-bottom: 10px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e55c6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>') no-repeat 4px center; /* 4pxは左からの距離, centerで垂直中央揃え */
+    background-size: 16px 16px; /* アイコンのサイズを明示的に指定 */
+}
+/* ▲▲▲ここまで修正▲▲▲ */
+
 .message-box{background:var(--bg-color);border:1px solid #eee;padding:14px;border-radius:10px;box-shadow:inset 0 2px 8px rgba(0,0,0,0.03)}
 .voice-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
 .voice-card{background:#fff;padding:12px;border-radius:10px;border-left:4px solid rgba(229,92,110,0.08)}
@@ -143,7 +152,7 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 <header role="banner">
     <img src="https://koikukuri-ce0bd.web.app/LP/06.png" alt="コイククリのイベント風景" class="main-visual" loading="eager">
     <h1>コイククリで、もう会話に悩まない。<br>内面で出会う、アバター謎解き婚活。</h1>
-    <p class="sub-copy">顔出し不要 / 会話ベタOK。<br><strong>【今だけ！】プレイベント 無料開催！</strong></p>
+    <p class="sub-copy">顔出し不要 / 会話ベタOK。<br></p>
     <p><a href="#events" class="cta-button" aria-label="開催予定のイベントをチェック">開催予定のイベントをチェック</a></p>
 </header>
 
@@ -156,34 +165,24 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
         コイククリは、<strong>MetaLife</strong>の仮想空間で行う全く新しいスタイル。謎解きという共通の目標に夢中になるうち、自然な協力体制と会話が生まれます。
     </p>
 
-    <!-- Event 1: Kanto Area -->
-    <div class="event-card">
-        <h3>【関東エリア限定】10月25日(土) 開催</h3>
-        <ul>
-            <li><span class="label">日時</span>2025年10月25日(土) 14:00〜16:00</li>
-            <li><span class="label">対象</span>関東エリア（東京/千葉/神奈川/埼玉）でパートナーを探している20歳以上の独身男女</li>
-            <li><span class="label">場所</span>オンライン (MetaLife使用)</li>
-            <li><span class="label">定員</span>男女各10名 (定員になり次第締め切り)</li>
-            <li><span class="label">参加費</span>無料</li>
-        </ul>
-        <div class="cta-wrapper">
-            <a href="https://www.kokuchpro.com/event/8dfcd58754b4f5ed58124d943a633c17/" class="cta-button" target="_blank" rel="noopener noreferrer">詳細・お申し込みはこちら！</a>
-        </div>
-    </div>
+    <div class="message-box" style="margin: 24px auto; max-width: 600px; text-align: left; padding: 20px 24px; background: #fff; border: 1px solid var(--accent-color);">
+        <h3 style="text-align: center; color: var(--main-color); margin-top: 0; border-bottom: 2px solid var(--accent-color); padding-bottom: 8px;">今後のイベント予定</h3>
+        
+        <p style="margin-top: 16px;">
+            <strong>【11月】</strong><br>
+            好評の、<strong>謎解きお試しイベント</strong>をMetaLifeで開催！<br>
+            （日程未定、開催に向けて準備中です）<br>
+            <span style="font-size: 0.9rem; color: #555;">前回のお試しイベントに参加できなかった方、ぜひこの機会にご参加ください。</span>
+        </p>
 
-    <!-- Event 2: Niigata Area -->
-    <div class="event-card">
-        <h3>【新潟エリア限定】11月1日(土) 開催</h3>
-        <ul>
-            <li><span class="label">日時</span>2025年11月1日(土) 14:00〜16:00</li>
-            <li><span class="label">対象</span>新潟県でパートナーを探している20歳以上の独身男女</li>
-            <li><span class="label">場所</span>オンライン (MetaLife使用)</li>
-            <li><span class="label">定員</span>男女各10名 (定員になり次第締め切り)</li>
-            <li><span class="label">参加費</span>無料</li>
-        </ul>
-        <div class="cta-wrapper">
-            <a href="https://kokc.jp/e/c2f7b42bb4b4ee50852e0ce529934e1c/" class="cta-button" target="_blank" rel="noopener noreferrer">詳細・お申し込みはこちら！</a>
-        </div>
+        <p style="margin-top: 20px; padding-top: 16px; border-top: 1px dotted #ccc;">
+            <strong>【12月】</strong><br>
+            いよいよ<strong>クリスマス婚活謎解きイベント</strong>開催予定！
+        </p>
+        
+        <p style="margin-top: 24px; text-align: center; font-weight: 700; font-size: 1.05rem;">
+            最新情報はLINE公式アカウントでお知らせします。<br>お楽しみに！
+        </p>
     </div>
     
     <p style="margin-top:24px;font-size:.95rem;"><a href="https://lin.ee/1uZADWk" target="_blank" rel="noopener noreferrer" style="color:var(--main-color);">LINE公式アカウントで最新情報を受け取る</a></p>
@@ -195,7 +194,7 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 従来の婚活は、「頑張って話さなきゃ」というプレッシャーから疲れてしまいがちです。<strong>コイククリ (Koi-Kukuri)</strong> は、そんなお悩みを解消します。
 </p>
 <p>
-<strong>MetaLife</strong>という非日常の仮想空間で、参加者全員が<strong>協力して謎を解く</strong>という共通のゴールに向かいます。なぜなら、<strong>結婚生活とは、課題解決の連続だからです。</strong>
+<strong>MetaLife</strong>という非日常の仮想空間で、参加者同士で協力して謎を解くという共通のゴールに向かいます。なぜなら、<strong>結婚生活とは、課題解決の連続だからです。</strong>
 </p>
 <p>
 謎解きを通じて、相手の<strong>課題解決に対する姿勢</strong>や、意見が対立したときに<strong>心地よい話し合いができるか</strong>を自然に見極められます。表面的なスペックではなく、<strong>未来のパートナーとしての本質的な資質</strong>を見つけましょう。
@@ -241,7 +240,6 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 <li>開始15分前にはログインをお願いいたします。</li>
 <li>謎を解くために、お手元にペンとメモ用紙をご用意いただくことをおすすめします。</li>      
 <li>ネットワーク環境が不安定な場合、イベントを円滑に進められない可能性があります。</li>      
-<li>参加費は無料ですが、正式リリース後は有料になる可能性があります。</li>
 </ul>
 </section>
 
@@ -263,6 +261,24 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 </div>
 </section>
 
+<!-- ▼▼▼ここから修正▼▼▼ -->
+<section aria-labelledby="staff">
+<h2 id="staff">運営者について</h2>
+<p>
+    私たち「コイククリ」は、新潟県在住の3名（男性1名・女性2名）がメインとなり、運営しています。
+</p>
+<p>
+    メンバーは20代、30代、40代と年代もバラバラ。（もちろん全員独身です！）<br>
+    「この謎、難しすぎるかな？」「もうちょっとヒントが欲しいね！」<br>
+    「こうしたらもっと会話が弾むかな？」「もっと内面を知ってもらうには...」<br>
+    といった感じで、日々あーだこーだ言い合いながら（笑）、楽しく企画を練っています。
+</p>
+<p>
+    婚活に「楽しさ」と「本質的な出会い」をプラスできるよう、心を込めてイベントを企画しています。
+</p>
+</section>
+<!-- ▲▲▲ここまで修正▲▲▲ -->
+
 <section class="line-section" aria-labelledby="line-info">
 <h2 id="line-info">LINE公式アカウントで最新情報を受け取る</h2>
 <p>イベント情報や参加方法、最新のお知らせをLINEで受け取れます。</p>
@@ -280,7 +296,3 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 
 </body>
 </html>
-
-
-
-
