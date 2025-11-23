@@ -11,58 +11,64 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://koikukuri.github.io/info/">
 <meta property="og:site_name" content="コイククリ (Koi-Kukuri)">
-/*<meta property="og:image" content="https://koikukuri-ce0bd.web.app/LP/12.png">*/
+<!-- <meta property="og:image" content="https://koikukuri-ce0bd.web.app/LP/12.png"> -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index,follow">
 <meta name="theme-color" content="#fdfcfa">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- フォントをM PLUS Rounded 1cに戻しました -->
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 /* Reset / base */
 *, *::before, *::after {box-sizing: border-box;}
 :root{
-    --main-color:#e55c6e;
-    --accent-color:#feb47b;
-    --bg-color:#fdfcfa;
-    --text-color:#544a45;
-    --card-bg:#ffffff;
-    --radius:16px;
-    --shadow: 0 6px 18px rgba(0,0,0,0.04);
-    --max-width:800px;
+    --main-color:#e55c6e;
+    --accent-color:#feb47b;
+    --bg-color:#fdfcfa;
+    --text-color:#544a45;
+    --card-bg:#ffffff;
+    --radius:16px;
+    --shadow: 0 6px 18px rgba(0,0,0,0.04);
+    --max-width:800px;
 }
 html,body{height:100%;}
 body{
-    margin:0;
-    font-family:'M PLUS Rounded 1c', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background:var(--bg-color);
-    color:var(--text-color);
-    line-height:1.6;
-    font-size:16px;
-    -webkit-font-smoothing:antialiased;
-    scroll-behavior:smooth;
+    margin:0;
+    /* 元のM PLUS Rounded 1cフォントに戻しました */
+    font-family:'M PLUS Rounded 1c', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg-color);
+    color:var(--text-color);
+    line-height:1.6;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+    scroll-behavior:smooth;
 }
 /* Layout */
 .container{max-width:var(--max-width);margin:24px auto;padding:12px;}
 header{background:#fff8f9;padding:28px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center}
 .main-visual {
-    width: 100%;
-    height: 200px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    display: block;
-    object-fit: cover;
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: block;
+    object-fit: cover;
 }
 h1{font-size:1.9rem;color:var(--main-color);margin:.25rem 0 8px;line-height:1.25}
 .sub-copy{color:#6f6a66;margin-bottom:12px}
 /* CTA */
 .cta-button{
-    display:inline-flex;align-items:center;justify-content:center;
-    gap:8px;padding:12px 28px;border-radius:999px;text-decoration:none;font-weight:700;
-    background:linear-gradient(135deg,var(--main-color),var(--accent-color));color:#fff;box-shadow:0 6px 20px rgba(254,180,123,0.35);
-    transition:transform .18s ease,box-shadow .18s ease;
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:8px;padding:12px 28px;border-radius:999px;text-decoration:none;font-weight:700;
+    background:linear-gradient(135deg,var(--main-color),var(--accent-color));
+    color:#fff; /* 元の白文字を維持 */
+    /* 文字の視認性確保のためテキストシャドウを追加 */
+    text-shadow: 0 0 4px rgba(0,0,0,0.2); 
+    box-shadow:0 6px 20px rgba(254,180,123,0.35);
+    transition:transform .18s ease,box-shadow .18s ease;
 }
 .cta-button:hover{transform:translateY(-3px);}
 .cta-button:focus{outline:3px solid rgba(229,92,110,0.18);outline-offset:4px}
@@ -72,44 +78,44 @@ section{background:var(--card-bg);padding:22px;border-radius:14px;box-shadow:var
 .event-section{background:#fffaf0;border:1.5px dashed var(--accent-color);text-align:center}
 /* Event Card Styles */
 .event-card {
-    background: #fff;
-    padding: 18px;
-    border-radius: 12px;
-    border: 1px solid rgba(229,92,110,0.08);
-    max-width: 600px;
-    margin: 24px auto;
-    text-align: left;
+    background: #fff;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(229,92,110,0.08);
+    max-width: 600px;
+    margin: 24px auto;
+    text-align: left;
 }
 .event-card h3 {
-    font-size: 1.25rem;
-    color: var(--main-color);
-    margin: 6px 0 16px;
-    text-align: center;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 8px;
+    font-size: 1.25rem;
+    color: var(--main-color);
+    margin: 6px 0 16px;
+    text-align: center;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 8px;
 }
 .event-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px 0;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
 }
 .event-card li {
-    padding: 8px 0;
-    display: flex;
-    border-bottom: 1px dotted #eee;
+    padding: 8px 0;
+    display: flex;
+    border-bottom: 1px dotted #eee;
 }
 .event-card li:last-child {
-    border-bottom: none;
+    border-bottom: none;
 }
 .event-card li .label {
-    font-weight: 700;
-    width: 80px;
-    flex-shrink: 0;
-    color: var(--main-color);
+    font-weight: 700;
+    width: 80px;
+    flex-shrink: 0;
+    color: var(--main-color);
 }
 .event-card .cta-wrapper {
-    text-align: center;
-    margin-top: 16px;
+    text-align: center;
+    margin-top: 16px;
 }
 h2{font-size:1.45rem;margin:0 0 18px;text-align:center;position:relative;padding-bottom:10px}
 h2::after{content:"";display:block;width:56px;height:4px;background:var(--accent-color);border-radius:2px;position:absolute;left:50%;bottom:0;transform:translateX(-50%)}
@@ -120,14 +126,13 @@ h2::after{content:"";display:block;width:56px;height:4px;background:var(--accent
 .feature-image{width:100%;height:auto;border-radius:8px;margin-top:12px;max-height:150px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
 .notes-list,.concept-target{list-style:none;padding:0;margin:0}
 
-/* ▼▼▼ここから修正▼▼▼ */
+/* リストアイテムのスタイル調整 */
 .notes-list li,.concept-target li{
-    padding-left: 28px; /* アイコン分のスペース */
-    margin-bottom: 10px;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e55c6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>') no-repeat 4px center; /* 4pxは左からの距離, centerで垂直中央揃え */
-    background-size: 16px 16px; /* アイコンのサイズを明示的に指定 */
+    padding-left: 28px; 
+    margin-bottom: 10px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e55c6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>') no-repeat 4px center; 
+    background-size: 16px 16px; 
 }
-/* ▲▲▲ここまで修正▲▲▲ */
 
 .message-box{background:var(--bg-color);border:1px solid #eee;padding:14px;border-radius:10px;box-shadow:inset 0 2px 8px rgba(0,0,0,0.03)}
 .voice-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
@@ -135,12 +140,52 @@ h2::after{content:"";display:block;width:56px;height:4px;background:var(--accent
 a.line-add{display:inline-block}
 .line-section{background:#fffaf0;border:1.5px dashed var(--accent-color);text-align:center}
 footer{text-align:center;padding:12px;color:#9a8f8c}
+
+/* 新しいスタイル：開催中イベントの強調 */
+.ongoing-event {
+    background: #ffecf2; /* 薄いピンクの背景 */
+    padding: 20px 24px;
+    border-radius: 14px;
+    border: 3px solid var(--main-color);
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(229,92,110,0.15);
+}
+.ongoing-event h3 {
+    font-size: 1.4rem;
+    color: var(--main-color);
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 12px;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.95; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.ongoing-event .event-date {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    display: block;
+    margin-bottom: 10px;
+}
+.ongoing-event a.cta-button {
+    background: linear-gradient(135deg, #ff8a00, var(--accent-color)); /* 目立つオレンジ系に変更 */
+    box-shadow: 0 6px 20px rgba(255,138,0,0.35);
+    /* 開催中イベントのCTAボタンも視認性を考慮 */
+    color: #fff;
+    text-shadow: 0 0 4px rgba(0,0,0,0.2); 
+    border: 1px solid #ff8a00;
+}
+
 @media (max-width:600px){
-    :root{--max-width:96vw}
-    h1{font-size:1.6rem}
-    h2{font-size:1.25rem}
-    section{padding:18px}
-    .cta-button{width:100%;padding:12px}
+    :root{--max-width:96vw}
+    h1{font-size:1.6rem}
+    h2{font-size:1.25rem}
+    section{padding:18px}
+    .cta-button{width:100%;padding:12px}
+    .ongoing-event h3 { font-size: 1.25rem; }
 }
 </style>
 </head>
@@ -150,42 +195,57 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 
 <div class="container">
 <header role="banner">
-    <img src="https://koikukuri-ce0bd.web.app/LP/06.png" alt="コイククリのイベント風景" class="main-visual" loading="eager">
-    <h1>コイククリで、もう会話に悩まない。<br>内面で出会う、アバター謎解き婚活。</h1>
-    <p class="sub-copy">顔出し不要 / 会話ベタOK。<br></p>
-    <p><a href="#events" class="cta-button" aria-label="開催予定のイベントをチェック">開催予定のイベントをチェック</a></p>
+    <img src="https://koikukuri-ce0bd.web.app/LP/06.png" alt="コイククリのイベント風景" class="main-visual" loading="eager">
+    <h1>コイククリで、もう会話に悩まない。<br>内面で出会う、アバター謎解き婚活。</h1>
+    <p class="sub-copy">顔出し不要 / 会話ベタOK。<br></p>
+    <p><a href="#events" class="cta-button" aria-label="開催予定のイベントをチェック">開催予定のイベントをチェック</a></p>
 </header>
 
 <main id="main" role="main">
 
 <section id="events" class="event-section" aria-labelledby="events-heading">
-    <h2 id="events-heading">開催予定のイベント</h2>
-    <p>
-        従来の婚活イベントで「何を話そうか」と緊張したり、疲れた経験はありませんか？<br>
-        コイククリは、<strong>MetaLife</strong>の仮想空間で行う全く新しいスタイル。謎解きという共通の目標に夢中になるうち、自然な協力体制と会話が生まれます。
-    </p>
+    <h2 id="events-heading">開催予定のイベント</h2>
+    <p>
+        従来の婚活イベントで「何を話そうか」と緊張したり、疲れた経験はありませんか？<br>
+        コイククリは、<strong>MetaLife</strong>の仮想空間で行う全く新しいスタイル。謎解きという共通の目標に夢中になるうち、自然な協力体制と会話が生まれます。
+    </p>
 
-    <div class="message-box" style="margin: 24px auto; max-width: 600px; text-align: left; padding: 20px 24px; background: #fff; border: 1px solid var(--accent-color);">
-        <h3 style="text-align: center; color: var(--main-color); margin-top: 0; border-bottom: 2px solid var(--accent-color); padding-bottom: 8px;">今後のイベント予定</h3>
-        
-        <p style="margin-top: 16px;">
-            <strong>【11月】</strong><br>
-            好評の、<strong>謎解きお試しイベント</strong>をMetaLifeで開催！<br>
-            （日程未定、開催に向けて準備中です）<br>
-            <span style="font-size: 0.9rem; color: #555;">前回のお試しイベントに参加できなかった方、ぜひこの機会にご参加ください。</span>
+    <!-- 開催中イベントのお知らせ（11月のお試しイベントをまとめて案内） -->
+    <div class="ongoing-event" style="max-width: 600px; margin: 24px auto; text-align: center;">
+        <h3>【速報】謎解きお試しイベント開催中！🎉</h3>
+        <span class="event-date">11月22日(金)〜24日(日) および 11月29日(金), 30日(土)に開催中！</span>
+        <p style="font-size: 1.05rem; margin-bottom: 16px;">
+            <!-- 修正対象のテキストを短縮しました -->
+            「まずはコイククリの謎解きに触れてほしい」という想いから、
+            自由に出入りができるお試しイベントを開催しています！
+        </p>
+        <p style="font-size: 0.95rem; margin-bottom: 20px;">
+            ペアでもおひとりでも、MetaLife会場で気軽に謎解きを体験できます。
         </p>
+        <p>
+            <a href="https://koikukuri00.web.app/event.html" target="_blank" rel="noopener noreferrer" class="cta-button" aria-label="開催中イベントの会場へ移動">
+                🚀 イベント会場へGO！
+            </a>
+        </p>
+    </div>
+    <!-- /開催中イベントのお知らせ -->
 
-        <p style="margin-top: 20px; padding-top: 16px; border-top: 1px dotted #ccc;">
-            <strong>【12月】</strong><br>
-            いよいよ<strong>クリスマス婚活謎解きイベント</strong>開催予定！
-        </p>
-        
-        <p style="margin-top: 24px; text-align: center; font-weight: 700; font-size: 1.05rem;">
-            最新情報はLINE公式アカウントでお知らせします。<br>お楽しみに！
-        </p>
-    </div>
-    
-    <p style="margin-top:24px;font-size:.95rem;"><a href="https://lin.ee/1uZADWk" target="_blank" rel="noopener noreferrer" style="color:var(--main-color);">LINE公式アカウントで最新情報を受け取る</a></p>
+    <div class="message-box" style="margin: 24px auto; max-width: 600px; text-align: left; padding: 20px 24px; background: #fff; border: 1px solid var(--accent-color);">
+        <h3 style="text-align: center; color: var(--main-color); margin-top: 0; border-bottom: 2px solid var(--accent-color); padding-bottom: 8px;">今後のイベント予定</h3>
+        
+        <!-- 11月の予定は開催中イベントに統合されたため削除 -->
+
+        <p style="margin-top: 16px;">
+            <strong>【12月】</strong><br>
+            いよいよ<strong>クリスマス婚活謎解きイベント</strong>開催予定！
+        </p>
+        
+        <p style="margin-top: 24px; text-align: center; font-weight: 700; font-size: 1.05rem;">
+            最新情報はLINE公式アカウントでお知らせします。<br>お楽しみに！
+        </p>
+    </div>
+    
+    <p style="margin-top:24px;font-size:.95rem;"><a href="https://lin.ee/1uZADWk" target="_blank" rel="noopener noreferrer" style="color:var(--main-color);">LINE公式アカウントで最新情報を受け取る</a></p>
 </section>
 
 <section aria-labelledby="what-is">
@@ -235,11 +295,11 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 <h2 id="notes">参加にあたって</h2>
 <ul class="notes-list">
 <li>PCでの参加を推奨しますが、スマートフォンやタブレットからもアクセス可能です。アバターの移動や文字入力に、外付けキーボードがあるとより快適に操作いただけます。</li>
-<li>顔出しは不要ですが、会話は音声が中心です。快適なコミュニケーションのため、イヤホンやヘッドホンのご用意をおすすめします。</li>      
+<li>顔出しは不要ですが、会話は音声が中心です。快適なコミュニケーションのため、イヤホンやヘッドホンのご用意をおすすめします。</li>      
 <li>イベント中の録画やスクリーンショットは禁止です。</li>
 <li>開始15分前にはログインをお願いいたします。</li>
-<li>謎を解くために、お手元にペンとメモ用紙をご用意いただくことをおすすめします。</li>      
-<li>ネットワーク環境が不安定な場合、イベントを円滑に進められない可能性があります。</li>      
+<li>謎を解くために、お手元にペンとメモ用紙をご用意いただくことをおすすめします。</li>      
+<li>ネットワーク環境が不安定な場合、イベントを円滑に進められない可能性があります。</li>      
 </ul>
 </section>
 
@@ -261,23 +321,21 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 </div>
 </section>
 
-<!-- ▼▼▼ここから修正▼▼▼ -->
 <section aria-labelledby="staff">
 <h2 id="staff">運営者について</h2>
 <p>
-    私たち「コイククリ」は、新潟県在住の3名（男性1名・女性2名）がメインとなり、運営しています。
+    私たち「コイククリ」は、新潟県在住の3名（男性1名・女性2名）がメインとなり、運営しています。
 </p>
 <p>
-    メンバーは20代、30代、40代と年代もバラバラ。（もちろん全員独身です！）<br>
-    「この謎、難しすぎるかな？」「もうちょっとヒントが欲しいね！」<br>
-    「こうしたらもっと会話が弾むかな？」「もっと内面を知ってもらうには...」<br>
-    といった感じで、日々あーだこーだ言い合いながら（笑）、楽しく企画を練っています。
+    メンバーは20代、30代、40代と年代もバラバラ。（もちろん全員独身です！）<br>
+    「この謎、難しすぎるかな？」「もうちょっとヒントが欲しいね！」<br>
+    「こうしたらもっと会話が弾むかな？」「もっと内面を知ってもらうには...」<br>
+    といった感じで、日々あーだこーだ言い合いながら（笑）、楽しく企画を練っています。
 </p>
 <p>
-    婚活に「楽しさ」と「本質的な出会い」をプラスできるよう、心を込めてイベントを企画しています。
+    婚活に「楽しさ」と「本質的な出会い」をプラスできるよう、心を込めてイベントを企画しています。
 </p>
 </section>
-<!-- ▲▲▲ここまで修正▲▲▲ -->
 
 <section class="line-section" aria-labelledby="line-info">
 <h2 id="line-info">LINE公式アカウントで最新情報を受け取る</h2>
@@ -288,13 +346,11 @@ footer{text-align:center;padding:12px;color:#9a8f8c}
 </main>
 
 <footer role="contentinfo">
-    <p>お問い合わせ: info@koikukuri.com</p>
-     <p>インターネット異性紹介事業届出済　受理番号：46250002000</p>
-    <p>&copy; 2025 Koi-Kukuri.</p>
+    <p>お問い合わせ: info@koikukuri.com</p>
+     <p>インターネット異性紹介事業届出済　受理番号：46250002000</p>
+    <p>&copy; 2025 Koi-Kukuri.</p>
 </footer>
 </div>
 
 </body>
 </html>
-
-
