@@ -54,27 +54,34 @@ header{
     position:relative;
     overflow:hidden;
 }
-.logo-img {
-    width: 50px;
-    height: auto;
-    margin-bottom: 10px;
-}
 .main-visual {
     width: 100%;
     height: auto;
     border-radius: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     display: block;
     object-fit: cover;
 }
-h1{font-size:1.8rem;color:var(--main-color);margin:.25rem 0 12px;line-height:1.4}
-.sub-copy{color:#6f6a66;margin-bottom:20px;font-weight:700}
+h1{
+    font-size:2.1rem;
+    color:var(--main-color);
+    margin:0 0 16px;
+    line-height:1.5;
+    letter-spacing: 0.02em;
+}
+.sub-copy{
+    color:#6f6a66;
+    margin-bottom:28px;
+    font-weight:700;
+    font-size: 1.1rem;
+}
 /* CTA */
 .cta-button{
     display:inline-flex;align-items:center;justify-content:center;
-    gap:10px;padding:16px 36px;border-radius:999px;text-decoration:none;font-weight:700;
+    gap:10px;padding:18px 40px;border-radius:999px;text-decoration:none;font-weight:700;
     background:linear-gradient(135deg,var(--main-color),var(--accent-color));color:#fff;box-shadow:0 8px 24px rgba(229,92,110,0.3);
     transition:transform .2s ease,box-shadow .2s ease;
+    font-size: 1.05rem;
 }
 .cta-button:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(229,92,110,0.4);}
 .cta-button:focus{outline:3px solid rgba(229,92,110,0.18);outline-offset:4px}
@@ -156,7 +163,8 @@ footer{text-align:center;padding:40px 12px;color:#9a8f8c;background:#fff8f9;bord
     :root{--max-width:100%}
     .container{margin:0;}
     header, section{border-radius:0;}
-    h1{font-size:1.4rem}
+    h1{font-size:1.6rem}
+    .sub-copy{font-size: 0.95rem;}
     .sns-grid { grid-template-columns: 1fr; }
     .cta-button{width:100%;}
 }
@@ -168,7 +176,6 @@ footer{text-align:center;padding:40px 12px;color:#9a8f8c;background:#fff8f9;bord
 
 <div class="container">
 <header role="banner">
-    <img src="logo.png" alt="コイククリ ロゴ" class="logo-img" loading="lazy">
     <img src="main-visual.png" alt="コイククリのメインビジュアル" class="main-visual" loading="eager">
     <h1>コイククリで、もう会話に悩まない。<br>内面で出会う、アバター謎解き婚活。</h1>
     <p class="sub-copy">顔出し不要 / 会話ベタOK / 共通の目的で自然に仲良くなる</p>
@@ -178,7 +185,7 @@ footer{text-align:center;padding:40px 12px;color:#9a8f8c;background:#fff8f9;bord
 <main id="main" role="main">
 
 <section id="events" class="event-section" aria-labelledby="events-heading">
-    <h2 id="events-heading">イベント情報</h2>
+    <h2 id="events-heading">Event Information</h2>
     <p>
         従来の婚活で「何を話そうか」と緊張して疲れた経験はありませんか？<br>
         コイククリは、<strong>MetaLife</strong>の仮想空間で行う全く新しいスタイル。謎解きという共通の目標に夢中になるうち、自然な協力体制と会話が生まれます。
@@ -195,7 +202,7 @@ footer{text-align:center;padding:40px 12px;color:#9a8f8c;background:#fff8f9;bord
         </p>
         <p>
             <a href="https://koikukuri00.web.app/event.html" target="_blank" rel="noopener noreferrer" class="cta-button" aria-label="開催中イベントの会場へ移動">
-                🚀 今すぐ体験する
+                🚀 今すぐ会場をのぞいてみる
             </a>
         </p>
     </div>
@@ -289,7 +296,7 @@ footer{text-align:center;padding:40px 12px;color:#9a8f8c;background:#fff8f9;bord
         私たち「コイククリ」は、新潟県在住の3名（男性1名・女性2名）がメインとなり、運営しています。
     </p>
     <p>
-        メンバーは20代、30代、40代と年代もバラバラ。（全員独身です！）<br>
+        メンバーは20代、30代、40代と年代もバラバラ。（もちろん全員独身です！）<br>
         「この謎、難しすぎるかな？」「もっと内面を知ってもらうには...」と、日々あーだこーだ言い合いながら、楽しく企画を練っています。
     </p>
     <p>
@@ -319,5 +326,3 @@ footer{text-align:center;padding:40px 12px;color:#9a8f8c;background:#fff8f9;bord
 
 </body>
 </html>
-
-
