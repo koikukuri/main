@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>【謹賀新年】プレテスト会場入り口 - Koi-Kukuri</title>
-    <meta name="description" content="2025-2026 SPECIAL 年末年始プレテスト期間限定 会場入り口です。注意事項をご確認の上、ご入場ください。">
-    
-    <meta property="og:title" content="【謹賀新年】プレテスト会場入り口 - Koi-Kukuri">
-    <meta property="og:description" content="2025-2026 SPECIAL 年末年始プレテスト期間限定 会場入り口です。注意事項をご確認の上、ご入場ください。">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://koikukuri.github.io/main/event.html">
-    <meta property="og:image" content="main-visual.png">
-
+    <title>おためし謎解きメタバース会場入り口 - Koi-Kukuri</title>
+    <meta name="description" content="Koi-Kukuriのおためし謎解きメタバース会場入り口です。操作方法を確認して会場へ。">
+    <meta property="og:title" content="おためし謎解きメタバース会場入り口 - Koi-Kukuri">
+    <meta property="og:description" content="Koi-Kukuriのおためし謎解きメタバース会場入り口です。操作方法を確認して会場へ。">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,9 +18,10 @@
             theme: {
                 extend: {
                     colors: {
-                        'newyear-red': '#D64545',
-                        'newyear-gold': '#D4AF37',
-                        'newyear-cream': '#FFFDF9',
+                        'romantic-pink': '#FF8DA1',
+                        'romantic-rose': '#E64A6A',
+                        'romantic-cream': '#FFF9FA',
+                        'romantic-gold': '#D4AF37',
                     },
                     fontFamily: { noto: ['"Noto Sans JP"', 'sans-serif'] },
                 },
@@ -33,99 +29,90 @@
         };
     </script>
     <style>
-        .new-year-pattern::before {
+        .site-pattern::before {
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(#d4af37 0.6px, transparent 0.6px);
+            background-image: radial-gradient(#ff8da1 0.5px, transparent 0.5px);
             background-size: 24px 24px;
             opacity: 0.15;
             z-index: -1;
             pointer-events: none;
         }
-        .step-badge {
-            background: #D64545;
-            color: white;
-            font-size: 10px;
-            font-weight: 900;
-            padding: 2px 8px;
-            border-radius: 99px;
-            margin-right: 8px;
+        .image-frame {
+            border: 3px solid #FF8DA1;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: white;
+        }
+        .heart-accent {
+            color: #FF8DA1;
+            filter: drop-shadow(0 0 2px rgba(255, 141, 161, 0.4));
         }
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center font-noto text-gray-800 bg-gradient-to-br from-red-50 via-newyear-cream to-orange-50 p-4 new-year-pattern">
+<body class="min-h-screen flex items-center justify-center font-noto text-gray-800 bg-romantic-cream p-4 site-pattern">
 
-    <div class="relative w-full p-6 sm:p-8 max-w-md bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-4 border-double border-newyear-gold overflow-hidden">
+    <div class="relative w-full p-6 sm:p-8 max-w-md bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-romantic-pink/30 overflow-hidden">
         
-        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-newyear-red via-newyear-gold to-newyear-red"></div>
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-romantic-pink via-romantic-rose to-romantic-pink"></div>
 
         <div class="text-center mb-6 pt-2">
             <div class="flex justify-center items-center space-x-2 mb-2">
-                <span class="text-newyear-gold text-xl">✨</span>
+                <span class="heart-accent text-lg">♥</span>
                 <img src="logo.png" alt="Koi-Kukuri Logo" class="w-20 h-auto drop-shadow-sm" loading="lazy">
-                <span class="text-newyear-gold text-xl">✨</span>
+                <span class="heart-accent text-lg">♥</span>
             </div>
-            <h1 class="text-xs font-bold text-newyear-red tracking-widest mb-1">2025-2026 SPECIAL</h1>
+            <h1 class="text-xs font-bold text-romantic-rose tracking-widest mb-1 uppercase">Trial Metaverse Experience</h1>
             <h2 class="text-2xl font-black text-gray-800 leading-tight">
-                年末年始プレテスト<br><span class="text-newyear-red">期間限定 会場入り口</span>
+                おためし謎解き<br><span class="text-romantic-rose">メタバース会場入り口</span>
             </h2>
         </div>
         
-        <div class="bg-red-50 p-4 rounded-xl shadow-inner mb-6 border border-red-100">
+        <div class="bg-pink-50/50 p-4 rounded-xl shadow-inner mb-6 border border-pink-100">
             <ul class="text-[11px] font-bold text-gray-700 space-y-2">
                 <li class="flex items-start">
-                    <span class="bg-newyear-red text-white text-[10px] px-1.5 py-0.5 rounded mr-2 mt-0.5">必読</span>
-                    <span>まず<span class="text-newyear-red underline font-black">「受付」案内板</span>を調べてください。</span>
+                    <span class="text-romantic-rose mr-2">●</span>
+                    <span>会場内の画面録画・スクリーンショットは禁止です。</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-newyear-red mr-2">●</span>
-                    <span>会場内の画面録画・スクリーンショットは禁止です。</span>
+                    <span class="text-romantic-rose mr-2">●</span>
+                    <span>ペンとメモ用紙を用意してご参加されることをおすすめします。</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-romantic-rose mr-2">●</span>
+                    <span>会場内に設定されているアンケートにご協力をお願いします。</span>
                 </li>
             </ul>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-gray-100">
-            <p class="text-[11px] font-black text-newyear-gold mb-4 text-center tracking-tighter uppercase">━━ 会場内でのアイテムの調べ方 ━━</p>
-            <div class="flex justify-around items-start space-x-3">
-                <div class="text-center w-1/2">
-                    <img src="pc.png" alt="PC操作" class="w-full h-24 object-contain rounded-xl mb-2" loading="lazy">
-                    <p class="text-[11px] font-bold text-gray-600 leading-tight">PCの場合<br><span class="text-newyear-red text-xs">「i」キーを押す</span></p>
-                </div>
-                <div class="text-center w-1/2">
-                    <img src="iphone.png" alt="スマホ操作" class="w-full h-24 object-contain rounded-xl mb-2" loading="lazy">
-                    <p class="text-[11px] font-bold text-gray-600 leading-tight">スマホの場合<br><span class="text-newyear-red text-xs">アイテムをタップ</span></p>
-                </div>
+        <div class="bg-white p-3 rounded-2xl shadow-sm mb-4 border border-gray-100">
+            <p class="text-[11px] font-black text-romantic-rose mb-2 text-center tracking-tighter uppercase">━━ 謎解きの進め方 ━━</p>
+            <div class="image-frame">
+                <img src="nazotoki.png" alt="謎解きの進め方" class="w-full" loading="lazy">
             </div>
         </div>
 
-        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 mb-6">
-            <p class="text-xs font-black text-gray-700 mb-4 text-center border-b border-gray-200 pb-2">入室前の設定手順</p>
-            
-            <div class="space-y-5">
-                <div>
-                    <div class="flex items-center mb-2">
-                        <span class="step-badge">STEP 1</span>
-                        <p class="text-[11px] font-black text-gray-700">必ず<span class="text-red-600">「許可」</span>を選択してください</p>
-                    </div>
-                    <img src="step1.PNG" alt="アクセス許可" class="w-full rounded-lg shadow-sm border border-gray-200" loading="lazy">
-                </div>
-                <div>
-                    <div class="flex items-center mb-2">
-                        <span class="step-badge">STEP 2</span>
-                        <p class="text-[11px] font-black text-gray-700">ここでマイク・カメラをオフにできます</p>
-                    </div>
-                    <img src="step2.PNG" alt="設定画面" class="w-full rounded-lg shadow-sm border border-gray-200" loading="lazy">
-                </div>
+        <div class="bg-white p-3 rounded-2xl shadow-sm mb-6 border border-gray-100">
+            <p class="text-[11px] font-black text-romantic-rose mb-2 text-center tracking-tighter uppercase">━━ アイテムの調べ方 ━━</p>
+            <div class="image-frame">
+                <img src="item.png" alt="アイテムの調べ方" class="w-full" loading="lazy">
             </div>
         </div>
         
         <div class="text-center space-y-4">
-            <div id="metalife-access-area">
-                <div class="animate-pulse text-gray-400 text-xs font-bold">会場の状態を確認中...</div>
+            <div id="access-area">
+                <a href="https://zep.us/play/Kw6rNG" target="_blank"
+                   class="w-full inline-flex items-center justify-center 
+                          bg-gradient-to-r from-romantic-pink to-romantic-rose text-white 
+                          rounded-full px-6 py-4 text-xl font-black 
+                          shadow-xl shadow-pink-200 
+                          hover:brightness-110 transition-all transform hover:scale-[1.02] border-b-4 border-rose-900">
+                    <i class="fas fa-play-circle mr-3"></i> 会場へ入場する
+                </a>
             </div>
-            <p class="text-[10px] text-gray-400 font-bold leading-tight" id="metalife-note"></p>
+            <p class="text-[10px] text-gray-400 font-bold leading-tight">※スマホから参加可能ですが、<br>PCでの参加を推奨します</p>
 
             <div class="pt-6 border-t border-dotted border-gray-200">
                 <a href="https://lin.ee/tFMuVj2" target="_blank"
@@ -135,50 +122,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function updateAccessArea() {
-            const now = new Date();
-            const nowTime = now.getTime();
-            
-            const events = [
-                { date: '12/29', start: '2025/12/29 05:00:00', end: '2025/12/30 05:00:00', url: 'https://app.metalife.co.jp/spaces/ZyreX4Sjn9hkSoSvZN21' },
-                { date: '12/30', start: '2025/12/30 05:00:00', end: '2025/12/31 05:00:00', url: 'https://app.metalife.co.jp/spaces/AVyQVEriXWW1Ub4PyBmy' },
-                { date: '12/31', start: '2025/12/31 05:00:00', end: '2026/01/01 05:00:00', url: 'https://app.metalife.co.jp/spaces/EgFq34z3fSyrrebIB8Z8' },
-                { date: '1/1',    start: '2026/01/01 05:00:00', end: '2026/01/02 05:00:00', url: 'https://app.metalife.co.jp/spaces/x4JNZDOWBQi08CsgjUMJ' },
-                { date: '1/2',    start: '2026/01/02 05:00:00', end: '2026/01/03 05:00:00', url: 'https://app.metalife.co.jp/spaces/kDcyxbcpJ7t88o87krPG' },
-                { date: '1/3',    start: '2026/01/03 05:00:00', end: '2026/01/04 05:00:00', url: 'https://app.metalife.co.jp/spaces/VhTm2EeFpHRc5lAyEGd6' },
-                { date: '1/4',    start: '2026/01/04 05:00:00', end: '2026/01/05 05:00:00', url: 'https://app.metalife.co.jp/spaces/YLldgjIqZVVIiNw21cLf' }
-            ];
-
-            const accessArea = document.getElementById('metalife-access-area');
-            const noteArea = document.getElementById('metalife-note');
-            let currentEvent = null;
-
-            for (let i = 0; i < events.length; i++) {
-                const s = new Date(events[i].start + " GMT+0900").getTime();
-                const e = new Date(events[i].end + " GMT+0900").getTime();
-                if (nowTime >= s && nowTime < e) { currentEvent = events[i]; break; }
-            }
-
-            if (currentEvent) {
-                accessArea.innerHTML = `
-                    <p class="text-xs font-black text-newyear-gold mb-3 tracking-widest uppercase">── Open Now ──</p>
-                    <a href="${currentEvent.url}" target="_blank"
-                       class="w-full inline-flex items-center justify-center 
-                              bg-gradient-to-r from-newyear-red to-[#b91c1c] text-white 
-                              rounded-full px-6 py-4 text-xl font-black 
-                              shadow-xl shadow-red-200 
-                              hover:brightness-110 transition-all transform hover:scale-[1.02] border-b-4 border-red-900">
-                        <i class="fas fa-play-circle mr-3"></i> 会場へ入場する
-                    </a>
-                `;
-                noteArea.innerHTML = "※スマホから参加可能ですが、<br>PCでの参加を推奨します";
-            } else {
-                accessArea.innerHTML = `<div class="bg-gray-100 text-gray-400 py-8 rounded-2xl font-bold">現在は閉場しております</div>`;
-            }
-        }
-        document.addEventListener('DOMContentLoaded', updateAccessArea);
-    </script>
 </body>
 </html>
